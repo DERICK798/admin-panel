@@ -1,8 +1,8 @@
-<?php
-session_start();
-include 'config/db.php';  // Uncomment when database config is ready
-?>
-
+<?php 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+include '../config/db.php'; ?>
 <!doctype html>
 <html lang="en">
 <head>
@@ -17,7 +17,7 @@ include 'config/db.php';  // Uncomment when database config is ready
     <section class="card" aria-labelledby="login-heading">
       <h1 id="login-heading">Sign in to Admin</h1>
 
-      <form id="login-form" novalidate>
+      <form id="login-form" method="POST" action="admin login-.php">
         <label for="username">Username or email</label>
         <input id="username" name="username" type="text" autocomplete="username" required>
 

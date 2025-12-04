@@ -1,5 +1,5 @@
 <?php 
-include 'protect.php';
+include 'protect admin pags.php';
 include '../config/db.php';
 ?>
 
