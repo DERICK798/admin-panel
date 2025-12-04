@@ -1,0 +1,17 @@
+/* Simple styles for the demo login page */
+:root{--bg:#f3f6fb;--card:#fff;--accent:#2b6df6;--muted:#6b7280;--error:#b91c1c}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#eef3fb);display:flex;align-items:center;justify-content:center}
+.page{width:100%;max-width:420px;padding:24px}
+.card{background:var(--card);padding:28px;border-radius:10px;box-shadow:0 6px 20px rgba(32,41,54,0.08)}
+h1{margin:0 0 16px;font-size:20px}
+label{display:block;margin:12px 0 6px;font-size:13px;color:#111827}
+input[type=text],input[type=password]{width:100%;padding:10px 12px;border:1px solid #e6e9ef;border-radius:6px;font-size:15px}
+.inline-row{display:flex;justify-content:space-between;align-items:center;margin:10px 0}
+.small{font-size:13px;color:var(--muted)}
+.btn{display:inline-block;margin-top:12px;width:100%;padding:10px 12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-weight:600;cursor:pointer}
+.btn:hover{filter:brightness(.97)}
+.muted{margin-top:14px;color:var(--muted);font-size:13px}
+.error{color:var(--error);min-height:18px;margin:6px 0;font-size:13px}
+@media (max-width:420px){.page{padding:16px}.card{padding:20px}}
