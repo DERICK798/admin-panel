@@ -1,3 +1,8 @@
+<?php
+session_start();
+include 'config/db.php';  // Uncomment when database config is ready
+?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -29,7 +34,7 @@
         <button type="submit" class="btn">Sign in</button>
       </form>
 
-      <p class="muted">This example uses client-side demo auth. Replace with server-side authentication.</p>
+      <p class="muted">@2025 all rights reserved..Admins only.Developed and managed by Dero.</p>
     </section>
   </main>
 
