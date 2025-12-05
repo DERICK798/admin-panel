@@ -17,7 +17,7 @@ include '../config/db.php'; ?>
     <section class="card" aria-labelledby="login-heading">
       <h1 id="login-heading">Sign in to Admin</h1>
 
-      <form id="login-form" method="POST" action="admin-login.php">
+      <form id="login-form" method="POST" action="">
         <label for="username">Username or email</label>
         <input id="username" name="username" type="text" autocomplete="username" required>
 
