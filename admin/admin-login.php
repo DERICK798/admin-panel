@@ -37,39 +37,3 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Admin Login</title>
-</head>
-<body>
-
-<h2>Admin Login</h2>
-
-<form method="POST" action="">
-    <label>Username</label><br>
-    <input id="username" name="username" type="text" autocomplete="username" required><br><br>
-
-    <label>Password</label><br>
-    <input id="password" name="password" type="password" autocomplete="current-password" required><br>
-
-    <label><input id="show-password" type="checkbox"> Show password</label><br><br>
-
-    <button type="submit">Login</button>
-</form>
-
-<p style="color:red;">
-    <?php echo $error; ?>
-</p>
-
-<script>
-document.getElementById("show-password").addEventListener("change", function(){
-    const pwd = document.getElementById("password");
-    pwd.type = this.checked ? "text" : "password";
-});
-</script>
-
-</body>
-</html>
