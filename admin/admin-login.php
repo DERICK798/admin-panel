@@ -1,6 +1,7 @@
 <?php
-echo "FILE LOADED";
+header("Location: admin-login.php");
 exit;
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -39,3 +40,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Admin Login</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<main class="page">
+<section class="card" aria-labelledby="login-heading">
+<h1 id="login-heading">Sign in to Admin</h1>
+
+<form method="POST" action="admin-login.php">
+    <label for="username">Username</label>
+    <input id="username" name="username" type="text" autocomplete="username" required>
+
+    <label for="password">Password</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required>
+
+    <div class="inline-row">
+        <label class="small"><input id="show-password" type="checkbox"> Show password</label>
+    </div>
+
+    <p id="error" role="alert" aria-live="polite" class="error"><?php echo $error; ?></p>
+
+    <button type="submit" class="btn">Sign in</button>
+</form>
+
+<p class="muted">@2025 all rights reserved..Admins only.</p>
+</section>
+</main>
+
+<script>
+document.getElementById('show-password').addEventListener('change', function() {
+    const pwd = document.getElementById('password');
+    pwd.type = this.checked ? 'text' : 'password';
+});
+</script>
+</body>
+</html>
+
