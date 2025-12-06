@@ -51,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 <section class="card" aria-labelledby="login-heading">
 <h1 id="login-heading">Sign in to Admin</h1>
 
-<form method="POST" action="">
+<form method="POST" action="admin-login.php">
     <label for="username">Username</label>
     <input id="username" name="username" type="text" autocomplete="username" required>
 
