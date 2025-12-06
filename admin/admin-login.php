@@ -90,7 +90,7 @@ button:hover { background: #0056b3; }
 
     <button type="submit" class="btn">Sign in</button>
 </form>
-
+<a href src="Register.php" class="small">Register as new admin</a>
 <p class="muted" style="text-align:center; margin-top:15px;">@2025 All rights reserved. Admins only.</p>
 </section>
 </main>
