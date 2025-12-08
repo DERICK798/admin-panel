@@ -8,7 +8,8 @@ error_reporting(E_ALL);
 session_start();
 
 // Include database connection
-include '../config/db.php';
+include __DIR__ . '/../config/db.php';
+
 
 $error = "";
 
