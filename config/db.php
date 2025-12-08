@@ -4,7 +4,7 @@ $user = "root";          // MySQL username
 $pass = "";              // MySQL password (mostly empty kwa XAMPP)
 $db   = "agrogrow";     // Database name yako
 
-$conn = mysqli_connect($host, $user, $pass, $db, 3307);
+$conn = mysqli_connect($host, $user, $pass, $db, 3306);
 
 if (!$conn) {
     die("Database connection failed: " . mysqli_connect_error());
