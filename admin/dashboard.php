@@ -16,7 +16,8 @@ if (!isset($_SESSION['admin'])) {
 </head>
 <body>
 <h2>Welcome, <?php echo $_SESSION['admin']; ?>!</h2>
-<p>This is the admin dashboard.</p>
+<span>agroGrow</span>
+
 <a href="logout.php">Logout</a>
 </body>
 </html>
