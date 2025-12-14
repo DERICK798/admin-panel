@@ -19,5 +19,8 @@ if (!isset($_SESSION['admin'])) {
 <span>agroGrow</span>
 
 <a href="logout.php">Logout</a>
+<a href="manage-products.php">Manage Products</a>
+<a href="manage-orders.php">Manage Orders</a>
+<a href="manage-users.php">Manage Users</a>
 </body>
 </html>

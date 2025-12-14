@@ -7,9 +7,8 @@ error_reporting(E_ALL);
 // Start session
 session_start();
 
-// Include database connection
+// Include database connection (must create $pdo)
 include __DIR__ . '/../config/db.php';
-
 
 $error = "";
 
@@ -18,18 +17,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = trim($_POST['username']);
     $password = $_POST['password'];
 
-    // Prepare statement
-    $stmt = $conn->prepare("SELECT id, username, password FROM admins WHERE username = ? LIMIT 1");
-    if ($stmt) {
-        $stmt->bind_param("s", $username);
-        $stmt->execute();
-        $result = $stmt->get_result();
+    try {
+        // Prepare statement (PDO uses :username binding)
+        $stmt = $pdo->prepare("SELECT id, username, password FROM admins WHERE username = :username LIMIT 1");
+        $stmt->execute([':username' => $username]);
+        $admin = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($result && $result->num_rows === 1) {
-            $admin = $result->fetch_assoc();
-
-            // Verify password (password in DB must be hashed!)
+        if ($admin) {
             if (password_verify($password, $admin['password'])) {
+
                 // Login successful → set session
                 $_SESSION['admin'] = $admin['username'];
                 $_SESSION['admin_id'] = $admin['id'];
@@ -37,21 +33,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 // Redirect to dashboard
                 header("Location: dashboard.php");
                 exit;
+
             } else {
                 $error = "Invalid password";
             }
-
         } else {
             $error = "Invalid username";
         }
 
-        $stmt->close();
-    } else {
-        $error = "Database error: " . $conn->error;
+    } catch (PDOException $e) {
+        $error = "Database error: " . $e->getMessage();
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
