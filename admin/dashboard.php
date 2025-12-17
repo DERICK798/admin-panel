@@ -1,12 +1,12 @@
 <?php
 session_start();
-require_once __DIR__ . '/../config/db.php';
-
-// Only allow logged in admins
 if (!isset($_SESSION['admin'])) {
-    header("Location: index.php");
+    header("Location: admin-login.php");
     exit;
 }
+
+require_once __DIR__ . '/../config/db.php';
+
 // COUNT DATA
 $products = $pdo->query("SELECT COUNT(*) AS total FROM products")->fetchColumn();
 $orders   = $pdo->query("SELECT COUNT(*) AS total FROM orders")->fetchColumn();
@@ -77,15 +77,14 @@ header .logo {
     <header>
 <h2>Welcome, <?php echo htmlspecialchars($_SESSION['admin']); ?> 👋</h2>
 <div class="logo"> Agro <span>grow</span></div>
-</div>
 </header>
 <div class="sidebar">
     <ul>
-<li><a href="logout.php">Logout</a></a>
-<li><a href="manage-product.php">Manage Products</li></a>
-<li><a href="add_product.php">add-Product</li></a>
-<li><a href="manage-orders.php">Manage Orders</li></a>
-<li><a href="manage-users.php">Manage Users</li></a>
+<li><a href="logout.php">Logout</a></li>
+<li><a href="manage-product.php">Manage Products</a></li>
+<li><a href="add_product.php">add-Product</a></li>
+<li><a href="manage-orders.php">Manage Orders</a></li>
+<li><a href="manage-users.php">Manage Users</a></li>
 </ul>
 </div>
 <div class="main-content">
