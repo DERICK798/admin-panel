@@ -1,18 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .logout { float: right; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgroGrow Admin Dashboard</title>
+  <link rel="stylesheet" href="css/dashboard.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>Admin Dashboard</h1>
-    <p>Welcome, admin!</p>
-    <a href="/admin/logout" class="logout">Logout</a>
-    <!-- Add dashboard content here -->
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2>AgroGrow</h2>
+      <nav>
+        <ul>
+          <li><a href="#overview" class="active">Overview</a></li>
+          <li><a href="#users">Users</a></li>
+          <li><a href="#orders">Orders</a></li>
+          <li><a href="#settings">Settings</a></li>
+          <li><a href="/api/auth/logout">Logout</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Overview Section -->
+      <section id="overview">
+        <h1>Dashboard Overview</h1>
+        <div class="stats-cards">
+          <div class="card">
+            <h3>Total Users</h3>
+            <p id="total-users">0</p>
+          </div>
+          <div class="card">
+            <h3>Total Orders</h3>
+            <p id="total-orders">0</p>
+          </div>
+          <div class="card">
+            <h3>Revenue</h3>
+            <p id="total-revenue">$0</p>
+          </div>
+        </div>
+
+        <div class="charts">
+          <canvas id="ordersChart" width="400" height="200"></canvas>
+        </div>
+      </section>
+
+      <!-- Users Section -->
+      <section id="users">
+        <h1>Users</h1>
+        <table id="users-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Registered</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Orders Section -->
+      <section id="orders">
+        <h1>Orders</h1>
+        <table id="orders-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Bike</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Settings Section -->
+      <section id="settings">
+        <h1>Settings</h1>
+        <p>Settings options will go here.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/dashboard.js"></script>
 </body>
 </html>
