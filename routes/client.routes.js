@@ -1,14 +1,10 @@
 const express = require('express');
-const router =express.Router();
-const products = require('../controllers/product.controller');
-const orders =require('../controllers/orders.controller');
-const auth = require('../middleware/client.auth.middleware');
+const router = express.Router();
 
-//public routes
-router.get('/product', product.getALL);
-router.get('/product/:id', product.getone);
-    
-//client actions
-router.post('/orders',orders.create);
+const productController = require('../controllers/product.controller');
+
+// products (client side)
+router.get('/product', productController.getALL);
+router.get('/product/:id', productController.getOne);
 
 module.exports = router;
