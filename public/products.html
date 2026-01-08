@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Products | AgroGrow</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">Agro<span>Grow</span></div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="products.html" class="active">Products</a>
+    <a href="about.html">About</a>
+    <a href="cart.html">my order</a>
+    <button class="btn-login">Login</button>
+  </nav>
+  <div class="theme-toggle" id="themeToggle">
+    <span class="light">☀️</span>
+    <span class="Dark">🌙</span>
+  </div>
+</header>
+
+<section class="product-hero">
+  <h1>Our Products</h1>
+  <p>Find high-quality farm inputs at affordable prices.</p>
+</section>
+
+
+<!-- ✅ FILTER + SEARCH -->
+<div class="product-filter">
+  <select id="categoryFilter">
+    <option value="all">All Categories</option>
+    <option value="feeds">Animal Feeds</option>
+    <option value="medicine">Vet Medicines / Veterinary services</option>
+    <option value="pesticides">Pesticides</option>
+    <option value="tools">Farm Tools</option>
+    <option value="fertilizers">fertilizers</option>
+  </select>
+
+  <input type="text" id="searchInput" placeholder="Search product...">
+</div>
+
+
+<!-- ✅ GRID STARTS HERE -->
+<h2 class="category-title">Animal Feeds / Chakula cha Wanyama</h2>
+<div class="product-container">
+
+  <div class="product-card" data-category="feeds">
+    <div class="image-container">
+    <img src="https://portal.mkulimabora.org/admin/product_photos_compressed/141.webp" alt="Chicken Mash 50kg">
+  <img src="https://agroduka.com/images/product/KL025_5079-768x768.jpg">  
+  </div>
+    <h3>Chicken Mash<br>25kg <br>50kg <br>100kg</h3>
+    <div class="rating">
+      <span data-star="5">★</span>
+      <span data-star="4">★</span>
+      <span data-star="3">★</span>
+      <span data-star="2">★</span>
+      <span data-star="1">★</span>
+    </div>
+
+    <label>quantity:</label>
+    <div class="quantity-container">
+      <button class="qty-btn minus"></button>
+      <input type="number" class="qty-input" value="1" min="1">
+      <button class="qty-btn plus"></button>
+    </div>
+
+  <p class="price" data-price="50" data-discount="">@50 ksh per kg</p>
+    <button class="btn-shop" data-name="Chicken Mashkg" data-price="50">Add to Cart</button>
+  </div>
+
+  <div class="product-card" data-category="feeds">
+    <div class="image-container">
+    <img src="https://th.bing.com/th/id/OIP.i0eDQzXSmMSP70tYKPlsFgHaEK?w=288&h=180&c=7&r=0&o=7&cb=ucfimgc2&pid=1.7&rm=3" alt="Cattle Cubes 50kg">
+  <img src="https://th.bing.com/th/id/OIP.i0eDQzXSmMSP70tYKPlsFgHaEK?w=288&h=180&c=7&r=0&o=7&cb=ucfimgc2&pid=1.7&rm=3">  
+  </div>
+    <h3>Cattle Cubes 50kg<br>100kg<br>150kg</h3>
+    <div class="rating">
+      <span data-star="5">★</span>
+      <span data-star="4">★</span>
+      <span data-star="3">★</span>
+      <span data-star="2">★</span>
+      <span data-star="1">★</span>
+    </div>
+     
+    <label>quantity (kg):</label>
+    <div class="quantity-container">
+      <button class="qty-btn minus"></button>
+      <input type="number" class="qty-input" value="1" min="1">
+      <button class="qty-btn plus"></button>
+    </div>
+
+  <p class="price" data-price="100" data-discount="30">@100 ksh per kg</p>
+    <button class="btn-shop" data-name="Cattle Cubes 50kg" data-price="3500">Add to Cart</button>
+  </div>
+
+
+  <div class="product-card" data-category="feeds">
+    <div class="image-container">
+      <img src="https://5.imimg.com/data5/SELLER/Default/2022/5/BT/BL/PW/51465373/cp-9958-premium-floating-fish-feed-1000x1000.jpg" alt="Fish Feed Type 1">
+      <img src="https://tse4.mm.bing.net/th/id/OIP.VYJYehnY0lqnOic9XVxd5AAAAA?cb=ucfimgc2&w=412&h=446&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Fish Feed Type 2">
+    </div>
+    <h3>Fish Feed 25kg<br>50kg,100kg</h3>
+    <div class="rating">
+      <span data-star="5">★</span>
+      <span data-star="4">★</span>
+      <span data-star="3">★</span>
+      <span data-star="2">★</span>
+      <span data-star="1">★</span>
+    </div>
+    
+    <label>quantity (kg):</label>
+    <div class="quantity-container">
+      <button class="qty-btn minus"></button>
+      <input type="number" class="qty-input" value="1" min="1">
+      <button class="qty-btn plus"></button>
+    </div>
+
+    <p>Found in different minerals and manufacturers</p>
+  <p class="price" data-price="70" data-discount="">@70 ksh per kg</p>
+    <button class="btn-shop" data-name="Fish Feed" data-price="70">Add to Cart</button>
+  </div>
+
+  <div class="product-card" data-category="feeds">
+    <div class="image-container">
+    <img src="https://5.imimg.com/data5/SELLER/Default/2023/9/342087281/SM/WD/SC/143005581/skm-high-growth-sheep-goat-pellet-feed-500x500.jpeg" alt="Goat Pellets 50kg">
+    <img src="https://th.bing.com/th/id/OIP.UWxSdUcURPuTFaz9LcNvGwAAAA?w=166&h=189&c=7&r=0&o=7&cb=ucfimgc2&pid=1.7&rm=3" alt="Goats pallets">
+    </div>
+    <h3>Goat Pellets<br>50kg 100kg</h3>
+    <div class="rating">
+      <span data-star="5">★</span>
+      <span data-star="4">★</span>
+      <span data-star="3">★</span>
+      <span data-star="2">★</span>
+      <span data-star="1">★</span>
+    </div>
+     
+    <label>quantity (kg):</label>
+    <div class="quantity-container">
+      <button class="qty-btn minus"></button>
+      <input type="number" class="qty-input" value="1" min="1">
+      <button class="qty-btn plus"></button>
+    </div>
+
+  <p class="price" data-price="2800" data-discount="">@2,800 ksh</p>
+    <button class="btn-shop" data-name="Goat Pellets 50kg" data-price="2800">Add to Cart</button>
+  </div>
+
+</div> <!-- end container -->
+
+<h2 class="category-title">Vet Medicines / Veterenary services</h2>
+<div class="product-container">
+
+  <div class="product-card" data-category="medicine">
+    <div class="image-container">
+      <img src="https://tse2.mm.bing.net/th/id/OIP.pSf90dysPj6xEm-1DPk8UgHaHa?cb=ucfimg2ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3" alt="Dewormer for Cattle">
+    </div>
+    <h3>Dewormer for Cattle 100ml</h3>
+    <div class="rating">
+      <span data-star="5">★</span>
+      <span data-star="4">★</span>
+      <span data-star="3">★</span>
+      <span data-star="2">★</span>
+      <span data-star="1">★</span>
+    </div>
+     
+    <p>Effective deworming for cattle and livestock</p>
+
+    <label>quantity:</label>
+    <div class="quantity-container">
+      <button class="qty-btn minus"></button>
+      <input type="number" class="qty-input" value="1" min="1">
+      <button class="qty-btn plus"></button>
+    </div>
+
+    <p class="price" data-price="450" data-discount="">@450 ksh</p>
+    <button class="btn-shop" data-name="Dewormer for Cattle 100ml" data-price="450">Add to Cart</button>
+  </div>
+
+  <div class="product-card" data-category="medicine">
+    <div class="image-container">
+      <img src="https://media.sciencephoto.com/image/f0358134/800wm/F0358134-Antibiotic_injection.jpg" alt="Antibiotic Injection">
+    </div>
+    <h3>Antibiotic Injection 50ml</h3>
+    <div class="rating">
+      <span data-star="5">★</span>
+      <span data-star="4">★</span>
+      <span data-star="3">★</span>
+      <span data-star="2">★</span>
+      <span data-star="1">★</span>
+    </div>
+     
+    <p>Broad-spectrum antibiotic for animals</p>
+
+    <label>quantity:</label>
+    <div class="quantity-container">
+      <button class="qty-btn minus"></button>
+      <input type="number" class="qty-input" value="1" min="1">
+      <button class="qty-btn plus"></button>
+    </div>
+
+    <p class="price" data-price="600" data-discount="">@600 ksh</p>
+    <button class="btn-shop" data-name="Antibiotic Injection 50ml" data-price="600">Add to Cart</button>
+  </div>
+
+  <div class="product-card" data-category="medicine">
+    <div class="image-container">
+      <img src="https://aabtgroup.com/wp-content/uploads/2023/08/VITALVIT-L-2.jpg" alt="Vitamin Supplement">
+    </div>
+    <h3>Vitamin Supplement 200ml</h3>
+    <div class="rating">
+      <span data-star="5">★</span>
+      <span data-star="4">★</span>
+      <span data-star="3">★</span>
+      <span data-star="2">★</span>
+      <span data-star="1">★</span>
+    </div>
+    <p>Essential vitamins for animal health</p>
+
+    <label>quantity:</label>
+    <div class="quantity-container">
+      <button class="qty-btn minus"></button>
+      <input type="number" class="qty-input" value="1" min="1">
+      <button class="qty-btn plus"></button>
+    </div>
+
+    <p class="price" data-price="350" data-discount="20">@350 ksh</p>
+    <button class="btn-shop" data-name="Vitamin Supplement 200ml" data-price="350">Add to Cart</button>
+  </div>
+
+  <div class="product-card" data-category="medicine">
+    <div class="image-container">
+      <img src="https://tse4.mm.bing.net/th/id/OIP.k8nHKdKnJdKdPq-aJrD9-wHaHa?w=178&h=178&c=7&r=0&o=7&cb=ucfimgc2&pid=1.7&rm=3" alt="Flea & Tick Treatment">
+    </div>
+    <h3>Flea & Tick Treatment 100ml</h3>
+    <div class="rating">
+      <span data-star="5">★</span>
+      <span data-star="4">★</span>
+      <span data-star="3">★</span>
+      <span data-star="2">★</span>
+      <span data-star="1">★</span>
+    </div>
+    <p>Effective parasite control for animals</p>
+
+    <label>quantity:</label>
+    <div class="quantity-container">
+      <button class="qty-btn minus"></button>
+      <input type="number" class="qty-input" value="1" min="1">
+      <button class="qty-btn plus"></button>
+    </div>
+
+    <p class="price" data-price="50" data-discount="10">@500 ksh</p>
+    <button class="btn-shop" data-name="Flea & Tick Treatment 100ml" data-price="500">Add to Cart</button>
+  </div>
+
+  <div class="product-card" data-category="medicine">
+    <div class="image-container">
+      <img src="https://tse1.mm.bing.net/th/id/OIP.XxX5Yk1b2Yk2bQX1bX5Z9AHaHa?pid=ImgDet&rs=1" alt="Pain Relief for Animals">
+    </div>
+    <h3>Pain Relief for Animals 100ml</h3>
+    <div class="rating">
+      <span data-star="5">★</span>
+      <span data-star="4">★</span>
+      <span data-star="3">★</span>
+      <span data-star="2">★</span>
+      <span data-star="1">★</span>
+    </div>
+    <p>Safe and effective pain management</p>
+
+    <label>quantity:</label>
+    <div class="quantity-container">
+      <button class="qty-btn minus"></button>
+      <input type="number" class="qty-input" value="1" min="1">
+      <button class="qty-btn plus"></button>
+    </div>
+
+    <p class="price" data-price="550" data-discount="">@550 ksh</p>
+    <button class="btn-shop" data-name="Pain Relief for Animals 100ml" data-price="550">Add to Cart</button>
+  </div>
+
+</div>
+
+<h2 class="category-title">Pesticides</h2>
+<div class="product-container">
+  <div class="product-card" data-category="pesticides">
+    <div class="image-container">
+      <img src="https://th.bing.com/th/id/OIP.yS6ipyLOki6KP-Z_coCiTQHaE8?w=300&h=200&c=7&r=0&o=7&pid=1.7&rm=3" alt="Pesticide 1">
+      <img src="https://5.imimg.com/data5/SELLER/Default/2022/3/YZ/UG/WF/3979847/agricultural-pesticide-500x500.jpg" alt="Pesticide 2">
+    </div>
+    <h3>Savvin - Insecticide 500ml</h3>
+    <div class="rating">
+      <span data-star="5">★</span>
+      <span data-star="4">★</span>
+      <span data-star="3">★</span>
+      <span data-star="2">★</span>
+      <span data-star="1">★</span>
+    </div>
+    <p>Effective pest control solution</p>
+
+    <label>quantity:</label>
+    <div class="quantity-container">
+      <button class="qty-btn minus"></button>
+      <input type="number" class="qty-input" value="1" min="1">
+      <button class="qty-btn plus"></button>
+    </div>
+
+    <p class="price" data-price="550" data-discount="">@550 ksh</p>
+    <button class="btn-shop" data-name="Savvin - Insecticide 500ml" data-price="550">Add to Cart</button>
+  </div>
+
+  <div class="product-card" data-category="pesticides">
+    <div class="image-container">
+      <img src="https://res.cloudinary.com/agrosmart/image/upload/v1630000000/products/ddt_pesticide.jpg" alt="DDT 1">
+      <img src="https://res.cloudinary.com/agrosmart/image/upload/v1630000000/products/ddt_pesticide2.jpg" alt="DDT 2">
+    </div>
+    <h3>DDT - Pesticide 1L</h3>
+    <div class="rating">
+      <span data-star="5">★</span>
+      <span data-star="4">★</span>
+      <span data-star="3">★</span>
+      <span data-star="2">★</span>
+      <span data-star="1">★</span>
+    </div>
+    <p>Professional strength insecticide</p>
+
+    <label>quantity:</label>
+    <div class="quantity-container">
+      <button class="qty-btn minus"></button>
+      <input type="number" class="qty-input" value="1" min="1">
+      <button class="qty-btn plus"></button>
+    </div>
+
+    <p class="price" data-price="650" data-discount="">@650 ksh</p>
+    <button class="btn-shop" data-name="DDT - Pesticide 1L" data-price="650">Add to Cart</button>
+  </div>
+
+  <div class="product-card" data-category="pesticides">
+    <div class="image-container">
+      <img src="https://s3.amazonaws.com/mgm-content/sites/armslist/uploads/posts/2014/06/14/3174416_01_diazinon_concentrate_640.jpg" alt="Diazinon concentrate">
+    </div>
+    <h3>Diazinon 500ml</h3>
+    <div class="rating">
+      <span data-star="5">★</span>
+      <span data-star="4">★</span>
+      <span data-star="3">★</span>
+      <span data-star="2">★</span>
+      <span data-star="1">★</span>
+    </div>
+    <p>Broad-spectrum insecticide. Use with protective equipment and follow label directions.</p>
+
+    <label>quantity:</label>
+    <div class="quantity-container">
+      <button class="qty-btn minus"></button>
+      <input type="number" class="qty-input" value="1" min="1">
+      <button class="qty-btn plus"></button>
+    </div>
+
+    <p class="price" data-price="300" data-discount="">@300 ksh</p>
+    <button class="btn-shop" data-name="Diazinon 500ml" data-price="300">Add to Cart</button>
+  </div>
+
+</div>
+
+<h2 class="category-title">Farm Tools</h2>
+<div class="product-container">
+
+  <div class="product-card" data-category="tools">
+    <div class="image-container">
+    
+    </div>
+    <h3>Hand Hoe</h3>
+    <div class="rating">
+      <span data-star="5">★</span>
+      <span data-star="4">★</span>
+      <span data-star="3">★</span>
+      <span data-star="2">★</span>
+      <span data-star="1">★</span>
+    </div>
+    <p>Effective digging and hoeing tool</p>
+
+    <label>quantity (kg):</label>
+    <div class="quantity-container">
+      <button class="qty-btn minus"></button>
+      <input type="number" class="qty-input" value="1" min="1">
+      <button class="qty-btn plus"></button>
+    </div>
+
+    <p class="price" data-price="800" data-discount="">@800 ksh</p>
+    <button class="btn-shop" data-name="Hand Hoe" data-price="800">Add to Cart</button>
+  </div>
+
+  <div class="product-card" data-category="tools">
+    <div class="image-container">
+      <img src="https://www.bing.com/th/id/OIP.8m-lxjZvzZ_fGJibUUHicgHaHa?w=188&h=188&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2" alt="Garden Rake">
+      <img src="https://www.bing.com/th/id/OIP.8m-lxjZvzZ_fGJibUUHicgHaHa?w=188&h=188&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2" alt="Garden Rake">
+    </div>
+    <h3>Garden Rake</h3>
+    <div class="rating">
+      <span data-star="5">★</span>
+      <span data-star="4">★</span>
+      <span data-star="3">★</span>
+      <span data-star="2">★</span>
+      <span data-star="1">★</span>
+    </div>
+    <p>Durable garden rake for soil preparation</p>
+
+    <label>quantity (kg):</label>
+    <div class="quantity-container">
+      <button class="qty-btn minus"></button>
+      <input type="number" class="qty-input" value="1" min="1">
+      <button class="qty-btn plus"></button>
+    </div>
+
+    <p class="price" data-price="1200" data-discount="25">@1,200 ksh</p>
+    <button class="btn-shop" data-name="Garden Rake" data-price="1200">Add to Cart</button>
+  </div>
+
+</div>
+
+<h2 class="category-title">fertilizers</h2>
+<div class="image-container">
+  
+</div>
+<script src="js/java.js"></script>
+
+<footer>@ 2025 AgroGrow. All Rights Reserved. Developed & managed by Dero </footer>
+
+</body>
+</html>
