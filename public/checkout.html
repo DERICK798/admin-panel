@@ -19,25 +19,28 @@
     <span class="Dark">🌙</span>
   </div>
     </header>
+<div class="checkout-container">
+  <h2>Enter Delivery Details</h2>
 
-     <div class="checkout-container">
-        <h2>Enter Delivery Details</h2>
-     <form id="checkout-form">
-  <input type="text" id="phone" name="phone" placeholder="Phone" required>
+  <!-- ✅ ORDER SUMMARY (THIS WAS MISSING) -->
+  <h3>Your Order</h3>
+  <ul id="orderSummary"></ul>
+  <h4>Total: KES <span id="total">0</span></h4>
 
-  <input type="text" id="location" name="location" placeholder="Location" required>
+  <!-- ✅ FIXED FORM ID -->
+  <form id="checkoutForm">
+    <input type="text" id="phone" placeholder="Phone" required>
+    <input type="text" id="location" placeholder="Location" required>
 
-  <select id="payment" name="payment" required>
-    <option value="">Select payment</option>
-    <option value="Mpesa">M-Pesa</option>
-    <option value="Cash">Cash</option>
-  </select>
+    <select id="payment" required>
+      <option value="">Select payment</option>
+      <option value="Mpesa">M-Pesa</option>
+      <option value="Cash">Cash</option>
+    </select>
 
-  <button type="submit">Place Order</button>
-</form>
-
+    <button type="submit">Place Order</button>
+  </form>
 </div>
 <script src="js/checkout.js"></script>
-<script src="js/java.js"></script>
     </body>
 </html>

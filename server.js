@@ -36,6 +36,9 @@ app.use(session({
 const path = require('path');
 app.use(express.static(path.join(__dirname, 'public')));
 
+const orderRoutes = require('./routes/Orders.routes');
+app.use('/api/orders', orderRoutes);
+
 
 
 // ================= ROUTES =================
