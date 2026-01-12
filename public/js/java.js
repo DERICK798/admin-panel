@@ -1,8 +1,6 @@
 // Initialize cart from localStorage
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-app.use(express.static('public')); // public folder = your html, css, js
-
 // Update cart count in header
 function updateCartCount() {
     const cartCountEl = document.getElementById('cart-count');
@@ -313,19 +311,19 @@ if (registerForm) {
       const res = await fetch('http://localhost:3000/api/users/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, phone, email, password })
+        body: JSON.stringify({ username, phone, email, password }),
+        credentials: 'include',
       });
 
       const result = await res.json();
 
-      if (!res.ok) {
-        alert(result.message);
-        return;
-      }
-
-      console.log('SUCCESS → redirecting to login');
-      window.location.href = 'login.html';
-
+      console.log(result); // muhimu sana
+if( res.ok){
+      window.location.href = '/login.html';
+}
+else{
+  alert(result.message || 'Registration failed');
+}
     } catch (err) {
       console.error(err);
       alert('Server not responding');
@@ -339,11 +337,11 @@ if (loginForm) {
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const identifier = document.getElementById('identifier').value.trim();
-    const password = document.getElementById('login-password').value;
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
 
     // basic validation
-    if (!identifier || !password) {
+    if (!email || !password) {
       alert('All fields are required');
       return;
     }
@@ -352,19 +350,19 @@ if (loginForm) {
       const res = await fetch('http://localhost:3000/api/users/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ identifier, password })
+        credentials: 'include',
+        body: JSON.stringify({ email, password })
       });
 
       const result = await res.json();
-
-      if (!res.ok) {
-        alert(result.message);
-        return;
-      }
+      if (res.ok){
 
       console.log('SUCCESS → redirecting to products');
-      window.location.href = 'products.html';
 
+      window.location.href = '/products';
+      } else {
+        alert(result.message || 'Login failed');
+      }
 
     } catch (err) {
       console.error(err);
@@ -474,22 +472,23 @@ if (localStorage.getItem("theme") === "dark") {
   body.classList.add("dark-mode");
 }
 
-toggle.addEventListener("click", () => {
-  body.classList.toggle("dark-mode");
+if (toggle) {
+  toggle.addEventListener("click", () => {
+    body.classList.toggle("dark-mode");
 
-  // Save user preference
-  if (body.classList.contains("dark-mode")) {
-    localStorage.setItem("theme", "dark");
-  } else {
-    localStorage.setItem("theme", "light");
-  }
-});
+    // Save user preference
+    if (body.classList.contains("dark-mode")) {
+      localStorage.setItem("theme", "dark");
+    } else {
+      localStorage.setItem("theme", "light");
+    }
+  });
+}
 
 // If on cart page, display cart items
-if (document.getElementById('cart-items')) {
-  const cartItemsContainer = document.getElementById('cart-items');
-  const totalPriceEl = document.getElementById('total-price');
-  const checkoutBtn = document.querySelector('.checkout-btn');
+if (document.getElementById('cartBody')) {
+  const cartBody = document.getElementById('cartBody');
+  const grandTotalEl = document.getElementById('grandTotal');
 
   try {
     // Defensive: ensure `cart` is an array (handle case where it's a JSON string)
@@ -497,20 +496,15 @@ if (document.getElementById('cart-items')) {
       try { cart = JSON.parse(cart); } catch (e) { console.warn('Could not parse cart string', e); cart = []; }
     }
 
-    // Update debug panel if present
-    const debugPre = document.getElementById('cart-debug');
-    if (debugPre) debugPre.textContent = cart && cart.length ? JSON.stringify(cart, null, 2) : '(no cart data)';
-
     console.log('Cart data:', cart);
 
     // Helper to render cart contents (call after changes)
     function renderCart() {
       let total = 0;
-      cartItemsContainer.innerHTML = "";
+      cartBody.innerHTML = "";
 
       if (!cart || cart.length === 0) {
-        cartItemsContainer.innerHTML = "<p>Your cart is empty</p>";
-        if (debugPre) debugPre.textContent = '(no cart data)';
+        cartBody.innerHTML = '<tr><td colspan="5">Your cart is empty</td></tr>';
       } else {
         cart.forEach((item, index) => {
           const qty = Number.parseFloat(item.quantity) || 1;
@@ -520,31 +514,28 @@ if (document.getElementById('cart-items')) {
 
           console.log(`Item ${index}:`, item, `qty: ${qty}, unit: ${unit}, subtotal: ${subtotal}`);
 
-          const div = document.createElement('div');
-          div.classList.add('cart-item');
+          const row = document.createElement('tr');
 
-          div.innerHTML = `
-            <span class="cart-name">${item.name}</span>
-            <span class="cart-qty">x${qty}</span>
-            <span class="cart-unit">Ksh ${Math.round(unit).toLocaleString()}</span>
-            <span class="cart-sub">Ksh ${Math.round(subtotal).toLocaleString()}</span>
-            <button class="remove-btn" data-index="${index}" aria-label="Remove ${item.name}">Remove</button>
+          row.innerHTML = `
+            <td>${item.name}</td>
+            <td>Ksh ${Math.round(unit).toLocaleString()}</td>
+            <td>${qty}</td>
+            <td>Ksh ${Math.round(subtotal).toLocaleString()}</td>
+            <td><button class="remove-btn" data-index="${index}" aria-label="Remove ${item.name}">Remove</button></td>
           `;
 
-          cartItemsContainer.appendChild(div);
+          cartBody.appendChild(row);
         });
       }
 
-      if (totalPriceEl) totalPriceEl.textContent = Math.round(total || 0).toLocaleString();
-      // update debug panel
-      if (debugPre) debugPre.textContent = cart && cart.length ? JSON.stringify(cart, null, 2) : '(no cart data)';
+      if (grandTotalEl) grandTotalEl.textContent = Math.round(total || 0).toLocaleString();
     }
 
     // initial render
     renderCart();
 
     // Event delegation for remove buttons
-    cartItemsContainer.addEventListener('click', (ev) => {
+    cartBody.addEventListener('click', (ev) => {
       const btn = ev.target.closest('.remove-btn');
       if (!btn) return;
       const idx = parseInt(btn.getAttribute('data-index'), 10);
@@ -558,34 +549,9 @@ if (document.getElementById('cart-items')) {
       alert(`${removed.name} removed from cart.`);
     });
 
-    // Checkout action - redirect to checkout form
-    if (checkoutBtn) {
-      checkoutBtn.addEventListener('click', () => {
-        if (!cart || cart.length === 0) {
-          alert("Cart yako iko empty!");
-          return;
-        }
-        window.location.href = "checkout.html";
-      });
-    }
-
   } catch (err) {
     console.error('Error rendering cart:', err);
-    cartItemsContainer.innerHTML = '<p style="color:crimson">Unable to load cart. Check console for details.</p>';
-    if (document.getElementById('cart-debug')) document.getElementById('cart-debug').textContent = String(err);
-  }
-
-  function goToCheckout() { window.location.href = "checkout.html"; }
-
-  // Cancel from cart with confirmation
-  function cancelFromCart() {
-    try {
-      const ok = confirm('Are you sure you want to cancel and go back to home? Your cart will remain saved.');
-      if (ok) location.href = 'index.html';
-    } catch (e) {
-      // fallback
-      location.href = 'index.html';
-    }
+    cartBody.innerHTML = '<tr><td colspan="5" style="color:crimson">Unable to load cart. Check console for details.</td></tr>';
   }
 }
   

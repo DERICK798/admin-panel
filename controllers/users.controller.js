@@ -46,15 +46,15 @@ exports.register = async (req, res) => {
 
 // LOGIN
 exports.login = async (req, res) => {
-  const { identifier, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!identifier || !password) {
+  if (!email || !password) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
   db.query(
     'SELECT * FROM users WHERE email=? OR phone=?',
-    [identifier, identifier],
+    [email, email],
     async (err, results) => {
       if (err) return res.status(500).json({ message: 'Server error' });
 

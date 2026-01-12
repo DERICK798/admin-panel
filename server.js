@@ -33,8 +33,10 @@ app.use(session({
 }));
 
 // static files (optional)
-app.use(express.static('public'));
-app.use(express.static('public'));
+const path = require('path');
+app.use(express.static(path.join(__dirname, 'public')));
+
+
 
 // ================= ROUTES =================
 app.use('/api/auth', authRoutes);
