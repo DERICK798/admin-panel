@@ -1,12 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-  // ==========================
-  // THEME TOGGLE
-  // ==========================
+  // --- Theme toggle ---
   const toggle = document.getElementById("themeToggle");
   const body = document.body;
 
-  // Load saved mode
   if (localStorage.getItem("theme") === "dark") {
     body.classList.add("dark-mode");
   }
@@ -14,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (toggle) {
     toggle.addEventListener("click", () => {
       body.classList.toggle("dark-mode");
-
       localStorage.setItem(
         "theme",
         body.classList.contains("dark-mode") ? "dark" : "light"
@@ -22,9 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // ==========================
-  // CART DISPLAY & TOTAL
-  // ==========================
+  // --- Cart & Order summary ---
   const checkoutCart = JSON.parse(localStorage.getItem('cart')) || [];
   const orderSummary = document.getElementById('orderSummary');
   const totalSpan = document.getElementById('total');
@@ -34,11 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   checkoutCart.forEach(item => {
     const price = parseFloat(item.unitPrice ?? item.price);
     const quantity = parseInt(item.quantity);
-
-    if (isNaN(price) || isNaN(quantity)) {
-      console.error('Invalid product data:', item);
-      return;
-    }
+    if (isNaN(price) || isNaN(quantity)) return;
 
     const itemTotal = price * quantity;
     total += itemTotal;
@@ -54,66 +44,64 @@ document.addEventListener('DOMContentLoaded', () => {
     totalSpan.textContent = `Ksh ${total.toLocaleString()}`;
   }
 
-  // ==========================
-  // HANDLE FORM SUBMIT
-  // ==========================
+  // --- FORM SUBMIT ---
   const checkoutForm = document.getElementById('checkoutForm');
-  if (checkoutForm) {
-    checkoutForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
+  if (!checkoutForm) return;
 
-      const phone = document.getElementById('phone').value.trim();
-      const location = document.getElementById('location').value.trim();
-      const payment_method = document.getElementById('payment').value;
+  checkoutForm.addEventListener('submit', async (e) => {
+    e.preventDefault(); // stop page reload
 
-      if (!phone || !location || !payment_method) {
-        alert('Please fill all fields');
-        return;
+    const phone = document.getElementById('phone').value.trim();
+    const location = document.getElementById('location').value.trim();
+    const payment_method = document.getElementById('payment').value;
+
+    if (!phone || !location || !payment_method) {
+      alert('Please fill all fields');
+      return;
+    }
+
+    if (checkoutCart.length === 0) {
+      alert('Cart is empty');
+      return;
+    }
+
+    // Prepare numeric cart data
+    const productsForBackend = checkoutCart.map(p => ({
+      name: p.name,
+      price: Number(p.unitPrice ?? p.price),
+      quantity: Number(p.quantity)
+    }));
+
+    try {
+      // ✅ AWAIT the fetch properly
+      const res = await fetch('http://localhost:3000/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          phone,
+          location,
+          payment_method,
+          products: productsForBackend,
+          total
+        })
+      });
+
+      // ✅ Parse response safely
+      const data = await res.json();
+
+      if (res.ok) {
+        alert('Order placed successfully!'); // ✅ Shows message
+        localStorage.removeItem('cart');
+        window.location.href = 'products.html'; // ✅ Redirect after success
+      } else {
+        alert(data.message || 'Failed to place order');
       }
 
-      if (checkoutCart.length === 0) {
-        alert('Cart is empty');
-        return;
-      }
-
-      // Ensure numeric values before sending
-      const productsForBackend = checkoutCart.map(p => ({
-        id: p.id,
-        name: p.name,
-        price: parseFloat(p.unitPrice ?? p.price),
-        quantity: parseInt(p.quantity)
-      }));
-
-      try{
-        const res = await fetch('http://localhost:3000/api/orders', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            phone,
-            location,
-            payment_method,
-            products: productsForBackend,
-            total // optional: send total calculated in frontend
-          })
-        });
-
-        const data = await res.json();
-
-        if (res.ok) {
-          alert('Order placed successfully');
-          localStorage.removeItem('cart');
-          window.location.href = 'index.html';
-          
-          window.location.href = 'products.html';
-        } else {
-          alert(data.message || 'Failed to place order');
-        }
-
-      } catch (err) {
-        console.error(err);
-        alert('Server is not responding. Please try again later.');
-      }
-    });
-  }
+    } catch (err) {
+      console.error(err);
+      alert('Server error. Please try again later.');
+    }
+  });
+localStorage.removeItem('cart');
 
 });

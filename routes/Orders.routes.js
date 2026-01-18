@@ -1,3 +1,4 @@
+const db = require('../config/db'); // ✅ ADD THIS
 const express = require('express');
 const router = express.Router();
 const ordersController = require('../controllers/orders.controller');

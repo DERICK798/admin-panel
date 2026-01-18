@@ -1,18 +1,15 @@
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
+const path = require('path');
 
-const authRoutes = require('./routes/Auth.routes');
-const clientRoutes = require('./routes/client.routes');
-const userRoutes = require('./routes/users.routes');
-
-const app = express();
+const app = express(); // ✅ MUST BE HERE
 
 // ================= MIDDLEWARE =================
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ CORS (MUST be before routes)
+// ✅ CORS
 app.use(cors({
   origin: [
     'http://localhost:5500',
@@ -22,29 +19,29 @@ app.use(cors({
   credentials: true
 }));
 
-// ✅ SESSION (ONCE only)
+// ✅ SESSION
 app.use(session({
   secret: 'supersecretkey',
   resave: false,
   saveUninitialized: false,
-  cookie: {
-    secure: false   // ❗ false for localhost (HTTP)
-  }
+  cookie: { secure: false }
 }));
 
-// static files (optional)
-const path = require('path');
+// ✅ STATIC FILES (VERY IMPORTANT)
 app.use(express.static(path.join(__dirname, 'public')));
 
-const orderRoutes = require('./routes/Orders.routes');
-app.use('/api/orders', orderRoutes);
-
-
-
 // ================= ROUTES =================
+const orderRoutes = require('./routes/Orders.routes');
+const authRoutes = require('./routes/Auth.routes');
+const clientRoutes = require('./routes/client.routes');
+const userRoutes = require('./routes/users.routes');
+const productRoutes = require('./routes/products.routes');
+
+app.use('/api/orders', orderRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/client', clientRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
 
 // ================= SERVER =================
 const PORT = 3000;

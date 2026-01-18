@@ -20,13 +20,15 @@ exports.createOrder = (req, res) => {
   db.query(orderQuery, [phone, location, payment_method, total], (err, result) => {
     if (err) return res.status(500).json(err);
 
+    console.log('PRODUCTS RECEIVED:', products);
+
     const orderId = result.insertId;
 
     const items = products.map(p => [
       orderId,
       p.name,
-      p.price,
-      p.quantity
+      number(p.price),
+      number(p.quantity)
     ]);
 
     const itemsQuery = `
@@ -36,7 +38,7 @@ exports.createOrder = (req, res) => {
 
     db.query(itemsQuery, [items], (err) => {
       if (err) return res.status(500).json(err);
-      res.json({ message: 'Order created', orderId });
+      res.status(201).json({ message: 'Order created', orderId });
     });
   });
 };
