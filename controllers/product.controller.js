@@ -22,10 +22,13 @@ exports.addProduct = (req, res) => {
   }
 
   const sql = `
-    INSERT INTO product
-    (name, category, description, price, price_per_kg, image, image2, status)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-  `;
+INSERT INTO product
+(name, category, price, description, image, image2)
+VALUES (?, ?, ?, ?, ?, ?)
+`;
+
+db.query(sql, [name, category, price, description, image, image2], callback);
+
 
   const values = [
     name,
@@ -86,18 +89,14 @@ exports.updateProduct = (req, res) => {
     status
   } = req.body;
 
-  const sql = `
-    UPDATE product SET
-      name = ?,
-      category = ?,
-      description = ?,
-      price = ?,
-      price_per_kg = ?,
-      image = ?,
-      image2 = ?,
-      status = ?
-    WHERE id = ?
-  `;
+const sql = `
+INSERT INTO product
+(name, category, price, description, image, image2)
+VALUES (?, ?, ?, ?, ?, ?)
+`;
+
+db.query(sql, [name, category, price, description, image, image2], callback);
+
 
   const values = [
     name,
@@ -179,7 +178,7 @@ exports.create = (req, res) => {
   }
 
   const sql = `
-    INSERT INTO products 
+    INSERT INTO product 
     (name, category, price, description, image, image2)
     VALUES (?, ?, ?, ?, ?, ?)
   `;
@@ -193,4 +192,8 @@ exports.create = (req, res) => {
     res.json({ message: "Product added", id: result.insertId });
   });
 };
+if (err) {
+  console.error(err);
+  return res.status(500).json({ message: 'DB error' });
+}
 

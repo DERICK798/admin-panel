@@ -1,35 +1,41 @@
-document.getElementById('add-product-form').addEventListener('submit', async (e) => {
-  e.preventDefault();
+if (typeof document !== 'undefined') {
+  document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
 
- 
-  const product = {
-    name: document.getElementById("name").value.trim(),
-    category: document.getElementById("category").value.trim(),
-    price: document.getElementById("price").value,
-    description: document.getElementById("description").value.trim(),
-    image: document.getElementById("image").value.trim(),
-    image2: document.getElementById("image2").value.trim()
-  };
-  try {
-    const res = await fetch('/api/client/products', {  // POST to backend
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, price, category, image, quantity })
-    });
 
-    const data = await res.json();
+    const product = {
+      name: document.getElementById("name").value.trim(),
+      category: document.getElementById("category").value.trim(),
+      price: document.getElementById("price").value,
+      description: document.getElementById("description").value.trim(),
+      image: document.getElementById("image").value.trim(),
+      image2: document.getElementById("image2").value.trim(),
+      quantity: document.getElementById("quantity")?.value || 0
+    };
+    try {
+      const res = await fetch('/api/client/products', {  // POST to backend
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(product)
+      });
 
-    if (res.ok) {
-      alert('Product added!');
-      window.location.href = '/dashboard.html'; // redirect frontend products page
-    } else {
-      alert(data.message || 'Failed to add product');
+      const data = await res.json();
+
+      if (res.ok) {
+        alert('Product added!');
+        window.location.href = '/products.html'; // redirect frontend products page
+      } else {
+        alert(data.message || 'Failed to add product');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Server error');
     }
-  } catch (err) {
-    console.error(err);
-    alert('Server error');
-  }
-});
+  });
+}
+//list//
+const productList = document.getElementById("productList");
+
 //delete
 async function deleteProduct(id) {
   if (!confirm('Delete product?')) return;
