@@ -1,5 +1,43 @@
-// Initialize cart from localStorage
+// GLOBAL CART
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+function addToCart(product, qty) {
+  if (!qty || qty < 1) qty = 1;
+
+  const exist = cart.find(item => item.id === product.id);
+
+  if (exist) {
+    exist.qty += qty;
+    exist.total = exist.qty * exist.price;
+  } else {
+    cart.push({
+      id: product.id,
+      name: product.name,
+      price: Number(product.price),
+      image: product.image,
+      qty: qty,
+      total: Number(product.price) * qty
+    });
+  }
+
+  localStorage.setItem('cart', JSON.stringify(cart));
+  alert(product.name + ' added to cart');
+}
+
+//stars control
+function renderStars(rating) {
+  let starsHTML = "";
+
+  for (let i = 1; i <= 5; i++) {
+    starsHTML += `
+      <span class="star ${i <= rating ? "active" : ""}" data-value="${i}">
+        ★
+      </span>
+    `;
+  }
+
+  return starsHTML;
+}
 
 // Update cart count in header
 function updateCartCount() {
@@ -128,27 +166,10 @@ buttons.forEach(button => {
     // Update cart count
     updateCartCount();
 
-    // Notify user
+    // Notify 
     alert(`${name} (x${quantity}) added to cart!`);
   });
 });
-// Star rating functionality
-document.querySelectorAll('.rating').forEach(ratingBox => {
-  const stars = ratingBox.querySelectorAll('span');
-
-  stars.forEach((star, index) => {
-    star.addEventListener('click', () => {
-      // remove active from all
-      stars.forEach(s => s.classList.remove('active'));
-
-      // add active to clicked and all before it
-      for (let i = 0; i <= index; i++) {
-        stars[i].classList.add('active');
-      }
-    });
-  });
-});
-
 
 // Optional: Add category filter
 const categoryFilter = document.getElementById('categoryFilter');
@@ -229,47 +250,114 @@ document.querySelectorAll('.quantity-container').forEach(ctrl => {
   // Ensure on manual change the value is valid
   input.addEventListener('change', clamp);
 });
-
-// Product API - Load products from endpoint
-const productsContainer = document.getElementById('products-container');
-
-fetch('http://localhost:3000/api/client/products')
-  .then(res => {
-    if (!res.ok) {
-      throw new Error('Failed to fetch products');
-    }
-    return res.json();
-  })
-  .then(data => {
-    if (!productsContainer) return;
-
-    if (!Array.isArray(data) || data.length === 0) {
-      productsContainer.innerHTML = '<p>No products available</p>';
-      return;
-    }
-
-    productsContainer.innerHTML = '';
-
-    data.forEach(product => {
-      const card = document.createElement('div');
-      card.className = 'product-card';
-
-      card.innerHTML = `
-        <img src="${product.image}" alt="${product.name}">
-        <h3>${product.name}</h3>
-        <p>KES ${product.price}</p>
-        <button>Order</button>
-      `;
-
-      productsContainer.appendChild(card);
-    });
-  })
-.catch(err => {
-  console.error('Product fetch error:', err);
-  if (productsContainer) {
-    productsContainer.innerHTML = '<p>Error loading products</p>';
-  }
+document.addEventListener("DOMContentLoaded", () => {
+  fetchProducts();
 });
+//fetch of products
+
+function fetchProducts() {
+  fetch("http://localhost:3000/api/products")
+    .then(res => res.json())
+    .then(products => renderProducts(products))
+    .catch(err => console.error(err));
+}
+
+function renderProducts(products) {
+  const container = document.getElementById("products-container");
+  if (!container) return;
+
+  container.innerHTML = "";
+
+  // 1️⃣ GROUP PRODUCTS BY CATEGORY
+  const grouped = {};
+
+  products.forEach(product => {
+    const category = product.category || "Other";
+
+    if (!grouped[category]) {
+      grouped[category] = [];
+    }
+    grouped[category].push(product);
+  });
+
+  // 2️⃣ RENDER EACH CATEGORY
+  Object.keys(grouped).forEach(category => {
+    // CATEGORY TITLE
+    const categorySection = document.createElement("section");
+    categorySection.className = "category-section";
+
+    const title = document.createElement("h2");
+    title.textContent = category;
+    categorySection.appendChild(title);
+
+    // PRODUCTS ROW
+    const row = document.createElement("div");
+    row.className = "product-row";
+
+    grouped[category].forEach(product => {
+      const card = document.createElement("div");
+      card.className = "product-card";
+card.innerHTML = `
+  <img src="/uploads/${product.image}" alt="${product.name}">
+  <h3>${product.name}</h3>
+
+  <div class="rating">
+    ${renderStars(product.rating || 0)}
+    <span class="rating-value">(${product.rating || 0})</span>
+  </div>
+
+  <p>KES ${product.price}</p>
+
+  <div class="quantity-container">
+    <button class="decrement">-</button>
+    <input type="number" class="qty-input" value="1" min="1">
+    <button class="increment">+</button>
+  </div>
+
+  <button class="btn-shop">Add to Cart</button>
+`;
+//stars control
+const stars = card.querySelectorAll(".star");
+    const ratingValue = card.querySelector(".rating-value");
+
+    stars.forEach(star => {
+      star.addEventListener("click", () => {
+        const selectedRating = Number(star.dataset.value);
+
+        stars.forEach(s =>
+          s.classList.toggle("active", Number(s.dataset.value) <= selectedRating)
+        );
+
+        ratingValue.textContent = `(${selectedRating})`;
+        console.log("Rated:", selectedRating);
+      });
+    });
+      // ELEMENTS
+      const qtyInput = card.querySelector(".qty-input");
+      const dec = card.querySelector(".decrement");
+      const inc = card.querySelector(".increment");
+      const addBtn = card.querySelector(".btn-shop");
+
+      dec.addEventListener("click", () => {
+        if (qtyInput.value > 1) qtyInput.value--;
+      });
+
+      inc.addEventListener("click", () => {
+        qtyInput.value++;
+      });
+
+      addBtn.addEventListener("click", () => {
+        addToCart(product, Number(qtyInput.value));
+      });
+
+      row.appendChild(card);
+    });
+
+    categorySection.appendChild(row);
+    container.appendChild(categorySection);
+  });
+}
+
 
 // ---------- REGISTER ----------
 const registerForm = document.getElementById('register-form');
@@ -549,10 +637,8 @@ if (document.getElementById('cartBody')) {
       alert(`${removed.name} removed from cart.`);
     });
 
-  } catch (err) {
-    console.error('Error rendering cart:', err);
-    cartBody.innerHTML = '<tr><td colspan="5" style="color:crimson">Unable to load cart. Check console for details.</td></tr>';
+    } catch (err) {
+      console.error('Error rendering cart:', err);
+      cartBody.innerHTML = '<tr><td colspan="5" style="color:crimson">Unable to load cart. Check console for details.</td></tr>';
+    }
   }
-}
-  
-

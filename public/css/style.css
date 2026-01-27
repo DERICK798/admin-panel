@@ -422,23 +422,6 @@ section:nth-of-type(3) { animation-delay: .6s; }
   padding: 2px 5px;
   border-radius: 4px;
 }
-
-/* Rating stars */
-.rating {
-  display: flex;
-  gap: 6px;
-  color: #ffdd57; /* gold */
-  font-size: 18px;
-  align-items: center;
-}
-.rating span {
-  cursor: pointer;
-  transition: transform .12s ease, color .12s ease;
-}
-.rating span:hover {
-  transform: translateY(-3px);
-  color: #ffb400;
-}
 /* price display when discount exists */
 .price .orig {
   text-decoration: line-through;
@@ -446,15 +429,39 @@ section:nth-of-type(3) { animation-delay: .6s; }
   margin-right: 8px;
 }
 .price .disc {
-  color: #1a4d2e;
+  color: hsl(144, 50%, 20%);
   font-weight: bold;
 }
-
-/* rating active star */
-.rating span.active {
-  transform: translateY(-3px);
-  color: #ffb400;
+/* RATING STYLES */
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 6px 0;
 }
+
+.star {
+  font-size: 16px;
+  color: #ccc;
+}
+
+.star.full {
+  color: gold;
+}
+
+.star.half {
+  color: gold;
+  opacity: 0.5;
+}
+
+.rating-value {
+  font-size: 13px;
+  color: #555;
+}
+.star:hover {
+  transform: scale(1.2);
+}
+
 h2 {
   font-size: 28px;
   text-align: center;
@@ -488,8 +495,7 @@ ul{
 }
 
 .btn-shop{
-  color:#250fee;
-}
+  color:#250fee;}
 
 .order-page {
   width: 90%;
@@ -677,22 +683,6 @@ ul{
   background: #0f3820;
 }
 
-/* RATING STARS */
-.rating span {
-  font-size: 22px;
-  color: #ccc;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.rating span:hover,
-.rating span:hover ~ span {
-  color: gold;
-}
-
-.rating span.active {
-  color: gold;
-}
 
 /* MOBILE RESPONSIVENESS */
 @media (max-width: 1024px) {
@@ -1077,3 +1067,6 @@ ul{
   justify-content: center;
 }
 
+.align-items-center {
+  align-items: center;
+}

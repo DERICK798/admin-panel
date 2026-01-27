@@ -1,16 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const clientAuth = require('../middleware/auth.middleware');
+const authMiddleware = require('../middleware/auth.middleware');
 const adminOnly = require('../middleware/admin.middleware');
 const productController = require('../controllers/product.controller');
 
-// client routes
+// public routes (client)
 router.get('/', productController.getALL);
+router.get('/animal-feed', productController.getAnimalFeed);
 router.get('/:id', productController.getOne);
 
 // admin routes
-router.post('/', clientAuth, adminOnly, productController.addProduct);
-router.put('/:id', clientAuth, adminOnly, productController.updateProduct);
-router.delete('/:id', clientAuth, adminOnly, productController.deleteProduct);
+router.post('/', authMiddleware, adminOnly, productController.addProduct);
+router.put('/:id', authMiddleware, adminOnly, productController.updateProduct);
+router.delete('/:id', authMiddleware, adminOnly, productController.deleteProduct);
 
 module.exports = router;

@@ -1,107 +1,83 @@
-document.addEventListener('DOMContentLoaded', () => {
+if (typeof document !== "undefined") {
+  document.addEventListener("DOMContentLoaded", () => {
+    const orderSummary = document.getElementById("orderSummary");
+    const totalElem = document.getElementById("total");
+    const checkoutForm = document.getElementById("checkoutForm");
 
-  // --- Theme toggle ---
-  const toggle = document.getElementById("themeToggle");
-  const body = document.body;
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
-  if (localStorage.getItem("theme") === "dark") {
-    body.classList.add("dark-mode");
-  }
+    if (!cart.length) {
+      orderSummary.innerHTML = "<li>Your cart is empty</li>";
+      totalElem.textContent = "0";
+    } else {
+      let grandTotal = 0;
+      orderSummary.innerHTML = "";
 
-  if (toggle) {
-    toggle.addEventListener("click", () => {
-      body.classList.toggle("dark-mode");
-      localStorage.setItem(
-        "theme",
-        body.classList.contains("dark-mode") ? "dark" : "light"
-      );
-    });
-  }
+      cart.forEach(item => {
+        item.price = Number(item.price);
+        item.qty = Number(item.qty) || 1;
 
-  // --- Cart & Order summary ---
-  const checkoutCart = JSON.parse(localStorage.getItem('cart')) || [];
-  const orderSummary = document.getElementById('orderSummary');
-  const totalSpan = document.getElementById('total');
+        const itemTotal = item.price * item.qty;
+        grandTotal += itemTotal;
 
-  let total = 0;
-
-  checkoutCart.forEach(item => {
-    const price = parseFloat(item.unitPrice ?? item.price);
-    const quantity = parseInt(item.quantity);
-    if (isNaN(price) || isNaN(quantity)) return;
-
-    const itemTotal = price * quantity;
-    total += itemTotal;
-
-    if (orderSummary) {
-      const div = document.createElement('div');
-      div.textContent = `${item.name} - Qty: ${quantity} - Subtotal: Ksh ${itemTotal.toLocaleString()}`;
-      orderSummary.appendChild(div);
-    }
-  });
-
-  if (totalSpan) {
-    totalSpan.textContent = `Ksh ${total.toLocaleString()}`;
-  }
-
-  // --- FORM SUBMIT ---
-  const checkoutForm = document.getElementById('checkoutForm');
-  if (!checkoutForm) return;
-
-  checkoutForm.addEventListener('submit', async (e) => {
-    e.preventDefault(); // stop page reload
-
-    const phone = document.getElementById('phone').value.trim();
-    const location = document.getElementById('location').value.trim();
-    const payment_method = document.getElementById('payment').value;
-
-    if (!phone || !location || !payment_method) {
-      alert('Please fill all fields');
-      return;
-    }
-
-    if (checkoutCart.length === 0) {
-      alert('Cart is empty');
-      return;
-    }
-
-    // Prepare numeric cart data
-    const productsForBackend = checkoutCart.map(p => ({
-      name: p.name,
-      price: Number(p.unitPrice ?? p.price),
-      quantity: Number(p.quantity)
-    }));
-
-    try {
-      // ✅ AWAIT the fetch properly
-      const res = await fetch('http://localhost:3000/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          phone,
-          location,
-          payment_method,
-          products: productsForBackend,
-          total
-        })
+        const li = document.createElement("li");
+        li.textContent = `${item.name} x ${item.qty} = KES ${itemTotal}`;
+        orderSummary.appendChild(li);
       });
 
-      // ✅ Parse response safely
-      const data = await res.json();
+      totalElem.textContent = grandTotal;
+    }
 
-      if (res.ok) {
-        alert('Order placed successfully!'); // ✅ Shows message
-        localStorage.removeItem('cart');
-        window.location.href = 'products.html'; // ✅ Redirect after success
-      } else {
-        alert(data.message || 'Failed to place order');
+    checkoutForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      if (!cart.length) {
+        alert("Your cart is empty!");
+        return;
       }
 
-    } catch (err) {
-      console.error(err);
-      alert('Server error. Please try again later.');
-    }
-  });
-localStorage.removeItem('cart');
+      const phone = document.getElementById("phone").value.trim();
+      const location = document.getElementById("location").value.trim();
+      const payment_method = document.getElementById("payment_method").value;
 
-});
+      if (!phone || !location || !payment_method) {
+        alert("Please fill all required fields");
+        return;
+      }
+
+      const orderData = {
+        phone,
+        location,
+        payment_method,
+        products: cart.map(item => ({
+          name: item.name,
+          price: Number(item.price),
+          quantity: Number(item.qty)
+        }))
+      };
+
+      console.log("Sending order:", orderData);
+
+      try {
+        const res = await fetch("http://localhost:3000/api/orders", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderData)
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.message || "Failed to place order");
+        }
+
+        const data = await res.json();
+        alert(data.message || "Order placed successfully!");
+        localStorage.removeItem("cart"); // clear cart
+        window.location.href = "/products.html";
+      } catch (err) {
+        console.error(err);
+        alert("Server error. Try again later.");
+      }
+    });
+  });
+}

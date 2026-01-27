@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const cors = require('cors');
@@ -21,14 +22,17 @@ app.use(cors({
 
 // ✅ SESSION
 app.use(session({
-  secret: 'supersecretkey',
+  secret: '28805',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: false }
+  cookie: { secure: true }
 }));
 
 // ✅ STATIC FILES (VERY IMPORTANT)
 app.use(express.static(path.join(__dirname, 'public')));
+
+//imges
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ================= ROUTES =================
 const orderRoutes = require('./routes/Orders.routes');

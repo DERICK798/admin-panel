@@ -23,18 +23,15 @@ exports.addProduct = (req, res) => {
 
   const sql = `
 INSERT INTO product
-(name, category, price, description, image, image2)
-VALUES (?, ?, ?, ?, ?, ?)
+(name, category, price, description, price_per_kg, image, image2, status)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?)
 `;
-
-db.query(sql, [name, category, price, description, image, image2], callback);
-
 
   const values = [
     name,
     category,
-    description || null,
     price,
+    description || null,
     price_per_kg || null,
     image || null,
     image2 || null,
@@ -70,6 +67,21 @@ exports.getALL = (req, res) => {
 };
 
 /**
+ * GET ANIMAL FEED PRODUCTS
+ */
+exports.getAnimalFeed = (req, res) => {
+  db.query(
+    "SELECT * FROM product WHERE status = 'active' AND category = 'animal-feed'",
+    (err, results) => {
+      if (err) {
+        return res.status(500).json({ message: 'Failed to fetch products' });
+      }
+      res.json(results);
+    }
+  );
+};
+
+/**
  * GET ONE PRODUCT BY ID ✅
  */
 
@@ -89,24 +101,21 @@ exports.updateProduct = (req, res) => {
     status
   } = req.body;
 
-const sql = `
-INSERT INTO product
-(name, category, price, description, image, image2)
-VALUES (?, ?, ?, ?, ?, ?)
+  const sql = `
+UPDATE product
+SET name = ?, category = ?, price = ?, description = ?, price_per_kg = ?, image = ?, image2 = ?, status = ?
+WHERE id = ?
 `;
-
-db.query(sql, [name, category, price, description, image, image2], callback);
-
 
   const values = [
     name,
     category,
-    description,
     price,
-    price_per_kg,
-    image,
-    image2,
-    status,
+    description || null,
+    price_per_kg || null,
+    image || null,
+    image2 || null,
+    status || 'active',
     id
   ];
 
@@ -178,7 +187,7 @@ exports.create = (req, res) => {
   }
 
   const sql = `
-    INSERT INTO product 
+    INSERT INTO product
     (name, category, price, description, image, image2)
     VALUES (?, ?, ?, ?, ?, ?)
   `;
@@ -192,8 +201,4 @@ exports.create = (req, res) => {
     res.json({ message: "Product added", id: result.insertId });
   });
 };
-if (err) {
-  console.error(err);
-  return res.status(500).json({ message: 'DB error' });
-}
 

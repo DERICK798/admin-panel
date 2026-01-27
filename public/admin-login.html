@@ -63,14 +63,15 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         });
 
         const data = await res.json();
+if (res.ok) {
+    localStorage.setItem('token', data.token);  // SAVE JWT
+    localStorage.setItem('role', data.role);    // optional
+    window.location.href = 'dashboard.html';
+} else {
+    const data = await res.json();
+    errormsg.innerText = data.error || 'Login failed';
+}
 
-        if (res.ok) {
-            // Login successful → redirect to dashboard
-            window.location.href = 'dashboard.html';
-        } else {
-            // Show error message
-            errormsg.innerText = data.error || 'Login failed';
-        }
     } catch(error) {
         errormsg.innerText = 'An error occurred. Please try again.';
     }

@@ -1,5 +1,8 @@
 const { query } = require('../config/db');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+const JWT_SECRET = process.env.JWT_SECRET || '28805';
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;
@@ -9,10 +12,7 @@ exports.login = async (req, res) => {
   }
 
   try {
-    const results = await query(
-      'SELECT * FROM admins WHERE email = ?',
-      [email]
-    );
+    const results = await query('SELECT * FROM admins WHERE email = ?', [email]);
 
     if (results.length === 0) {
       return res.status(401).json({ error: 'Invalid email or password' });
@@ -20,19 +20,21 @@ exports.login = async (req, res) => {
 
     const user = results[0];
 
-    // compare password (kama ni hashed)
+    // compare password
     const match = await bcrypt.compare(password, user.password);
     if (!match) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // session (optional)
-    req.session.user = {
-      id: user.id,
-      email: user.email
-    };
+    // SIGN JWT
+    const token = jwt.sign(
+      { id: user.id, role: 'admin' },  // always include role
+      JWT_SECRET,
+      { expiresIn: '1d' }             // optional expiry
+    );
 
-    res.json({ message: 'Login successful' });
+    // send token to frontend
+    res.json({ token, role: 'admin' });
 
   } catch (err) {
     console.error(err);

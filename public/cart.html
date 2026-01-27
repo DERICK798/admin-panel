@@ -1,43 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>My Cart</title>
-  <link rel="stylesheet" href="css/style.css"
+  <meta charset="UTF-8">
+  <title>My Cart | AgroGrow</title>
+  <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <header>
-    <div class="logo">Agro<span>Grow</span></div>
-    </header>
+
+<header>
+  <div class="logo">Agro<span>Grow</span></div>
+</header>
+
 <nav>
-    <a href="checkout.html" class="active">user Details</a>
-    <a href="products.html">Products</a>
-    <a href="cart.html">my order</a>
-  </nav>
-   <div class="theme-toggle" id="themeToggle">
-    <span class="light">☀️</span>
-    <span class="Dark">🌙</span>
-  </div>
+  <a href="products.html">Products</a>
+  <a href="cart.html" class="active">My Order</a>
+  <a href="checkout.html">Checkout</a>
+</nav>
+
 <h2>Your Cart</h2>
 
-<table border="1">
+<table border="1" width="100%">
   <thead>
     <tr>
       <th>Product</th>
-      <th>Price</th>
+      <th>Price (KES)</th>
       <th>Qty</th>
       <th>Total</th>
       <th>Action</th>
     </tr>
   </thead>
-  <tbody id="cartBody"></tbody>
+  <tbody id="cartBody">
+    <!-- Cart items inserted here -->
+  </tbody>
 </table>
 
 <h3>Total: KES <span id="grandTotal">0</span></h3>
 
-<a href="checkout.html">
-  <button>Proceed to Checkout</button>
-</a>
-<footer>Agroagrow Shop.com..All Rights and Data privacy considered.</footer>
-<script src="js/java.js"></script>
+<button onclick="goToCheckout()">Proceed to Checkout</button>
+
+<footer>
+  AgroGrow Shop.com — All Rights Reserved
+</footer>
+
+<script src="js/cart.js"></script>
 </body>
 </html>
