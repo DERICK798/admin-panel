@@ -58,34 +58,37 @@ async function loadProducts() {
     if (!res.ok) throw new Error('Fetch failed');
 
     const products = await res.json();
-    const container = document.getElementById('products-container');
+    const tbody = document.querySelector('#products-table tbody');
 
-    if (!container) return;
+    if (!tbody) return;
 
-    container.innerHTML = '';
+    tbody.innerHTML = '';
 
     products.forEach(p => {
-      const card = document.createElement('div');
-      card.className = 'product-card';
-      const imageUrl = p.image
-    ? `/uploads/${p.image}`
-    : '/images/default.jpg';
+      const row = document.createElement('tr');
 
-      card.innerHTML = `
-        <img src="${imageUrl}" alt="${p.name}" style="width: 100px; height: 100px;">
-        <h3>${p.name}</h3>
-        <p>Price: ${p.price}</p>
-        <p>Quantity: ${p.quantity}</p>
-        <button onclick="updateProduct(${p.id})">Edit</button>
-        <button onclick="deleteProduct(${p.id})">Delete</button>
+      const imageUrl = p.image ? `/uploads/${p.image}` : '/images/default.jpg';
+      const image2Url = p.image2 ? `/uploads/${p.image2}` : '/images/default.jpg';
+
+      row.innerHTML = `
+        <td>${p.name}</td>
+        <td>${p.price}</td>
+        <td>${p.category}</td>
+        <td>${p.quantity}</td>
+        <td><img src="${imageUrl}" alt="${p.name}" style="width: 50px; height: 50px;"></td>
+        <td><img src="${image2Url}" alt="${p.name} 2" style="width: 50px; height: 50px;"></td>
+        <td>
+          <button onclick="updateProduct(${p.id})">Edit</button>
+          <button onclick="deleteProduct(${p.id})">Delete</button>
+        </td>
       `;
-      container.appendChild(card);
+      tbody.appendChild(row);
     });
 
   } catch (err) {
     console.error(err);
-    const container = document.getElementById('products-container');
-    if (container) container.innerHTML = '<p>Failed to load products</p>';
+    const tbody = document.querySelector('#products-table tbody');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="7">Failed to load products</td></tr>';
   }
 }
 

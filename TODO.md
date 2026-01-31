@@ -1,3 +1,3 @@
-- [x] Fix the logo img src attribute in public/index.html: add quotes and correct the path to "AgroGrowOnline Store.png"
-- [x] Fix the .logo CSS in public/css/style.css: adjust height, width, and display properties for proper logo display
-
+- [x] Remove "Image" and "Image2" column headers from the products table in dashboard.html
+- [x] Update the loadProducts function in add-product.js to exclude the image <td> elements from the table rows and adjust the error colspan from 7 to 5
+- [x] Verify that the add product form and update logic preserve image data handling without changes
