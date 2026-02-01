@@ -1,28 +1,32 @@
+// config/db.js
 const mysql = require('mysql2');
 
-const connection = mysql.createConnection({
+// ✅ Create a connection
+const db = mysql.createConnection({
   host: 'localhost',
   user: 'ahdija',
   password: '4422derrick',
   database: 'agrogrow'
 });
 
-connection.connect((err) => {
+// Test connection
+db.connect((err) => {
   if (err) {
     console.error('❌ MySQL connection error:', err.message);
-    return;
+  } else {
+    console.log('✅ Connected to MySQL');
   }
-  console.log('✅ Connected to MySQL');
 });
 
-// promise-based query helper
-const query = (sql, params = []) => {
+// ✅ Promise-based query helper
+// Use like: await db.query('SELECT * FROM users WHERE id = ?', [1]);
+db.query = function(sql, params = []) {
   return new Promise((resolve, reject) => {
-    connection.query(sql, params, (err, results) => {
+    this.execute(sql, params, (err, results) => {
       if (err) reject(err);
       else resolve(results);
     });
   });
 };
 
-module.exports = { query };
+module.exports = db;

@@ -4,7 +4,15 @@ const session = require('express-session');
 const cors = require('cors');
 const path = require('path');
 
-const app = express(); // ✅ MUST BE HERE
+const db = require('./config/db'); // ✅ import mysql2 connection
+
+const app = express(); // MUST initialize app FIRST
+
+// ✅ Attach DB to req
+app.use((req, res, next) => {
+  req.db = db;
+  next();
+});
 
 // ================= MIDDLEWARE =================
 app.use(express.json());
@@ -25,13 +33,11 @@ app.use(session({
   secret: '28805',
   resave: false,
   saveUninitialized: false,
-  cookie: { secure: true }
+  cookie: { secure: false } // ⚠ for localhost
 }));
 
-// ✅ STATIC FILES (VERY IMPORTANT)
+// ✅ STATIC FILES
 app.use(express.static(path.join(__dirname, 'public')));
-
-//imges
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ================= ROUTES =================

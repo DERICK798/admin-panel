@@ -358,35 +358,6 @@ const stars = card.querySelectorAll(".star");
   });
 }
 
-const loginForm = document.getElementById('login-form');
-
-if (loginForm) {
-  loginForm.addEventListener('submit', async e => {
-    e.preventDefault();
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
-
-    try {
-      const res = await fetch('http://localhost:3000/api/users/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-
-      const result = await res.json();
-
-      if (res.ok) {
-        localStorage.setItem('user', JSON.stringify(result.user));
-        window.location.href = '/products.html';
-      } else {
-        alert(result.message || 'Login failed');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Server not responding');
-    }
-  });
-}
 // Ensure feeds use kg (allow decimals) and others use integer steps
 document.querySelectorAll('.product-card').forEach(card => {
   const qcont = card.querySelector('.quantity-container');
