@@ -56,16 +56,16 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     errormsg.innerText = '';
 
     try {
-        const res = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password })
-        });
+        const res = await fetch('/api/admin/login', {  // ✅ Updated route
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password })
+});
 
         const data = await res.json();
 if (res.ok) {
     localStorage.setItem('token', data.token);  // SAVE JWT
-    localStorage.setItem('role', data.role);    // optional
+        // optional
     window.location.href = 'dashboard.html';
 } else {
     const data = await res.json();

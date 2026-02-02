@@ -42,13 +42,13 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // ================= ROUTES =================
 const orderRoutes = require('./routes/Orders.routes');
-const authRoutes = require('./routes/Auth.routes');
+const adminRoutes = require('./routes/admin.routes');
 const clientRoutes = require('./routes/client.routes');
 const userRoutes = require('./routes/users.routes');
 const productRoutes = require('./routes/products.routes');
 
+app.use('/api/admin', adminRoutes);
 app.use('/api/orders', orderRoutes);
-app.use('/api/auth', authRoutes);
 app.use('/api/client', clientRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);

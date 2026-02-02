@@ -63,9 +63,32 @@ res.status(201).json({
   });
 };
 
+exports.deleteOrder = (req, res) => {
+  const { id } = req.params;
+
+  db.query(
+    'DELETE FROM orders WHERE id = ?',
+    [id],
+    (err, result) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Failed to delete order' });
+      }
+
+      res.json({ message: 'Order deleted successfully' });
+    }
+  );
+};
+
 exports.getOrders = (req, res) => {
-  db.query('SELECT * FROM orders ORDER BY id DESC', (err, results) => {
-    if (err) return res.status(500).json(err);
-    res.json(results);
-  });
+  db.query(
+    "SELECT * FROM orders ORDER BY id DESC",
+    (err, results) => {
+      if (err) {
+        console.error('ORDERS FETCH ERROR:', err);
+        return res.status(500).json({ message: 'Failed to fetch orders' });
+      }
+      res.json(results);
+    }
+  );
 };
