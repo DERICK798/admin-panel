@@ -6,6 +6,8 @@ if (!token) {
   window.location.href = '/admin-login.html';
 }
 
+let currentPage = 1;
+
 // ================== ADD PRODUCT ==================
 if (typeof document !== 'undefined') {
   const form = document.getElementById('addProductForm');
@@ -25,7 +27,7 @@ if (typeof document !== 'undefined') {
       };
 
       try {
-        const res = await fetch('http://localhost:3000/api/products', {
+        const res = await fetch('/api/products', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -51,18 +53,66 @@ if (typeof document !== 'undefined') {
   }
 }
 
-// ================== LOAD PRODUCTS ==================
-async function loadProducts() {
-  try {
-    const res = await fetch('http://localhost:3000/api/products');
-    if (!res.ok) throw new Error('Fetch failed');
+// ================== PAGINATION RENDER ==================
+function renderProductPagination(page, totalPages) {
+  const pagination = document.getElementById("products-pagination");
+  if (!pagination) return;
+  pagination.innerHTML = "";
 
-    const products = await res.json();
+  // Ensure at least 1 page is recognized
+  if (!totalPages) totalPages = 1;
+
+  // Previous button
+  const prevBtn = document.createElement("button");
+  prevBtn.textContent = "Prev";
+  prevBtn.disabled = page === 1;
+  prevBtn.onclick = () => loadProducts(page - 1);
+  pagination.appendChild(prevBtn);
+
+  // Page numbers
+  for (let i = 1; i <= totalPages; i++) {
+    const btn = document.createElement("button");
+    btn.textContent = i;
+    btn.className = page === i ? "active" : "";
+    btn.onclick = () => loadProducts(i);
+    pagination.appendChild(btn);
+  }
+
+  // Next button
+  const nextBtn = document.createElement("button");
+  nextBtn.textContent = "Next";
+  nextBtn.disabled = page === totalPages;
+  nextBtn.onclick = () => loadProducts(page + 1);
+  pagination.appendChild(nextBtn);
+}
+
+// ================== LOAD PRODUCTS ==================
+async function loadProducts(page = 1) {
+  currentPage = page;
+  try {
+    const res = await fetch(`/api/products?page=${page}&limit=10`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.message || 'Fetch failed');
+    }
+
+    const result = await res.json();
+    // Handle both paginated { data: [...] } and flat [...] responses
+    const products = result.data || (Array.isArray(result) ? result : []);
+    const totalPages = result.totalPages || 0;
+    const currentPageNum = result.page || 1;
     const tbody = document.querySelector('#products-table tbody');
 
     if (!tbody) return;
 
     tbody.innerHTML = '';
+
+    if (!products || products.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">No products found</td></tr>';
+      return;
+    }
 
     products.forEach(p => {
       const row = document.createElement('tr');
@@ -85,10 +135,13 @@ async function loadProducts() {
       tbody.appendChild(row);
     });
 
+    // Render pagination
+    renderProductPagination(currentPageNum, totalPages);
+
   } catch (err) {
     console.error(err);
     const tbody = document.querySelector('#products-table tbody');
-    if (tbody) tbody.innerHTML = '<tr><td colspan="7">Failed to load products</td></tr>';
+    if (tbody) tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: red;">Failed to load products: ${err.message}</td></tr>`;
   }
 }
 
@@ -97,7 +150,7 @@ async function deleteProduct(id) {
   if (!confirm('Delete this product?')) return;
 
   try {
-    const res = await fetch(`http://localhost:3000/api/products/${id}`, {
+    const res = await fetch(`/api/products/${id}`, {
       method: 'DELETE',
       headers: { 'Authorization': `Bearer ${token}` }
     });
@@ -107,7 +160,7 @@ async function deleteProduct(id) {
 
     if (res.ok) {
       alert(data.message || '🗑️ Product deleted');
-      loadProducts();
+      loadProducts(currentPage);
     } else {
       alert(data.message || `❌ Delete failed (${res.status})`);
     }
@@ -123,8 +176,10 @@ async function updateProduct(id) {
   const name = prompt('New name:');
   const price = parseFloat(prompt('New price:'));
   const category = prompt('New category:');
-  const image = prompt('New image URL:');
   const quantity = parseInt(prompt('New quantity:'));
+  const image = prompt('New image URL:');
+  const image2 = prompt('New image2 URL:');
+  const description = prompt('New description:');
 
   if (!name || isNaN(price) || !category || !image || isNaN(quantity)) {
     alert('Invalid input');
@@ -132,20 +187,20 @@ async function updateProduct(id) {
   }
 
   try {
-    const res = await fetch(`http://localhost:3000/api/products/${id}`, {
+    const res = await fetch(`/api/products/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ name, price, category, image, quantity })
+      body: JSON.stringify({ name, price, category, image, image2, description, quantity })
     });
 
     const data = await res.json();
 
     if (res.ok) {
       alert('✏️ Product updated');
-      loadProducts();
+      loadProducts(currentPage);
     } else {
       alert(data.message || 'Update failed');
     }
@@ -156,4 +211,6 @@ async function updateProduct(id) {
 }
 
 // ================== INIT ==================
-window.addEventListener('DOMContentLoaded', loadProducts);
+window.addEventListener('DOMContentLoaded', () => {
+  loadProducts();
+});

@@ -2,40 +2,9 @@
 const usersToken = localStorage.getItem('token');
 
 if (!usersToken || usersToken === 'undefined') {
+  // This script runs on the dashboard, so if the token is missing,
+  // other scripts would have already redirected. We can just log an error.
   console.error('Admin token not found. Users cannot be loaded.');
-}
-
-// ================== PAGINATION RENDER ==================
-function renderUserPagination(page, totalPages) {
-  const pagination = document.getElementById("users-pagination");
-  if (!pagination) return;
-  pagination.innerHTML = "";
-
-  // Ensure at least 1 page is recognized
-  if (!totalPages) totalPages = 1;
-
-  // Previous button
-  const prevBtn = document.createElement("button");
-  prevBtn.textContent = "Prev";
-  prevBtn.disabled = page === 1;
-  prevBtn.onclick = () => loadUsers(page - 1);
-  pagination.appendChild(prevBtn);
-
-  // Page numbers
-  for (let i = 1; i <= totalPages; i++) {
-    const btn = document.createElement("button");
-    btn.textContent = i;
-    btn.className = page === i ? "active" : "";
-    btn.onclick = () => loadUsers(i);
-    pagination.appendChild(btn);
-  }
-
-  // Next button
-  const nextBtn = document.createElement("button");
-  nextBtn.textContent = "Next";
-  nextBtn.disabled = page === totalPages;
-  nextBtn.onclick = () => loadUsers(page + 1);
-  pagination.appendChild(nextBtn);
 }
 
 // ================== LOAD USERS ==================
@@ -43,7 +12,7 @@ async function loadUsers(page = 1) {
   if (!usersToken || usersToken === 'undefined') return;
 
   try {
-    const res = await fetch(`/api/users?page=${page}&limit=10`, {
+    const res = await fetch(`http://localhost:3000/api/users?page=${page}&limit=10`, {
       headers: {
         Authorization: `Bearer ${usersToken}`,
       },
@@ -55,10 +24,7 @@ async function loadUsers(page = 1) {
     }
 
     const result = await res.json();
-    // Handle both paginated { data: [...] } and flat [...] responses
-    const users = result.data || (Array.isArray(result) ? result : []);
-    const totalPages = result.totalPages || 0;
-    const currentPage = result.page || 1;
+    const users = result.data;
     const tbody = document.querySelector("#users-table tbody");
 
     if (!tbody) return;
@@ -84,8 +50,7 @@ async function loadUsers(page = 1) {
       tbody.appendChild(row);
     });
 
-    // Render pagination
-    renderUserPagination(currentPage, totalPages);
+    // Note: Pagination for users is not implemented yet.
 
   } catch (err) {
     console.error('Failed to load users:', err);

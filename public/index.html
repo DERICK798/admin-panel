@@ -17,7 +17,7 @@
     <a href="products.html">Products</a>
     <a href="about.html">About</a>
     <a href="contact.html">Contact</a>
-    <button class="btn-login" onclick="location.href='login.html'">Login</button>
+    <button class="btn-login" id="authBtn">Login</button>
   </nav>
 
   <div class="theme-toggle" id="themeToggle">
@@ -102,6 +102,23 @@
   </div>
 </section>
 <script src="js/java.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const authBtn = document.getElementById('authBtn');
+    const user = localStorage.getItem('user');
+
+    if (user) {
+      authBtn.textContent = 'Logout';
+      authBtn.onclick = () => {
+        localStorage.removeItem('user');
+        window.location.reload();
+      };
+    } else {
+      authBtn.textContent = 'Login';
+      authBtn.onclick = () => window.location.href = 'login.html';
+    }
+  });
+</script>
 <footer>© 2025 AgroGrow. All Rights Reserved.Developed and Managed By Dero</footer>
 
 </body>

@@ -1,8 +1,7 @@
 const { query } = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
-const JWT_SECRET = process.env.JWT_SECRET || '28805';
+const JWT_SECRET = '28805';
 
 exports.login = async (req, res) => {
   const { email, password } = req.body;

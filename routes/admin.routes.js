@@ -4,43 +4,67 @@ const db = require('../config/db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-router.post('/login', async (req, res) => {
+// Register new admin (Use this to create your first admin)
+router.post('/register', async (req, res) => {
+  console.log("👉 Register Request:", req.body);
   try {
     const { email, password } = req.body;
+    if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
 
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password required' });
-    }
+    const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("💾 Saving to DB...");
+    await db.promise().query('INSERT INTO admins (email, password) VALUES (?, ?)', [email, hashedPassword]);
+    console.log("✅ Saved!");
 
-    // 1️⃣ Find admin by email
-    const rows = await db.query('SELECT * FROM admins WHERE email = ?', [email]);
+    res.status(201).json({ message: 'Admin registered successfully' });
+  } catch (err) {
+    console.error('ADMIN REGISTER ERROR:', err);
+    res.status(500).json({ message: 'Server error during registration', error: err.message });
+  }
+});
 
-    if (!rows || rows.length === 0) {
+router.post('/login', async (req, res) => {
+  try {
+    console.log('STEP 1: BODY', req.body);
+
+    const { email, password } = req.body;
+
+    console.log('STEP 2: QUERY DB');
+  const [rows] = await db.promise().query(
+  'SELECT * FROM admins WHERE email = ?',
+  [email]
+);
+
+    console.log('STEP 3: ROWS', rows);
+
+    if (!rows.length) {
       return res.status(401).json({ message: 'Admin not found' });
     }
 
-    const admin = rows[0];
+    console.log('STEP 4: COMPARE PASSWORD');
+    const isMatch = await bcrypt.compare(password, rows[0].password);
 
-    // 2️⃣ Check password
-    const isMatch = await bcrypt.compare(password, admin.password);
+    console.log('STEP 5: PASSWORD MATCH?', isMatch);
+
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid password' });
     }
 
-    // 3️⃣ Generate JWT
+    console.log('STEP 6: GENERATE TOKEN');
     const token = jwt.sign(
-      { id: admin.id },  // no role needed
-      process.env.JWT_SECRET,
+      { id: rows[0].id, role: 'admin' },
+      '28805',
       { expiresIn: '1d' }
     );
 
-    // 4️⃣ Return token
-    res.json({ message: 'Admin login successful', token });
+    console.log('STEP 7: SEND RESPONSE');
+    return res.json({ token });
 
   } catch (err) {
-    console.error('ADMIN LOGIN ERROR:', err);
-    res.status(500).json({ message: 'Server error' });
+    console.error('LOGIN ERROR:', err);
+    return res.status(500).json({ message: 'Server error' });
   }
 });
+
 
 module.exports = router;

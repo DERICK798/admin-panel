@@ -12,7 +12,7 @@ router.post('/register', async (req, res) => {
   }
 
   try {
-    const existingUsers = await db.query(
+    const [existingUsers] = await db.promise().query(
       'SELECT id FROM users WHERE email = ? OR phone = ?',
       [email, phone]
     );
@@ -23,7 +23,7 @@ router.post('/register', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const result = await db.query(
+    const [result] = await db.promise().query(
       'INSERT INTO users (username, email, phone, password) VALUES (?, ?, ?, ?)',
       [username, email, phone, hashedPassword]
     );
@@ -44,7 +44,7 @@ router.post('/login', async (req, res) => {
   try {
     const { emailOrPhone, password } = req.body;
 
-    const rows = await db.query(
+    const [rows] = await db.promise().query(
       'SELECT * FROM users WHERE email = ? OR phone = ?',
       [emailOrPhone, emailOrPhone]
     );
@@ -68,5 +68,33 @@ router.post('/login', async (req, res) => {
   }
 });
 
+router.get('/', async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const [countRows] = await db.promise().query(
+      "SELECT COUNT(*) as total FROM users"
+    );
+
+    const total = countRows[0] ? countRows[0].total : 0;
+    const totalPages = Math.ceil(total / limit);
+
+    const [users] = await db.promise().query(
+      `SELECT id, username as name, email, created_at FROM users ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
+    );
+
+    res.json({
+      data: users,
+      page,
+      totalPages,
+      total
+    });
+  } catch (err) {
+    console.error("USERS LOAD ERROR:", err);
+    res.status(500).json({ message: "Failed to load users", error: err.message });
+  }
+});
 
 module.exports = router;
