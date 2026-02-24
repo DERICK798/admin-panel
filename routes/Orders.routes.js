@@ -9,6 +9,26 @@ router.post('/', ordersController.createOrder);
 router.get('/:id', authMiddleware, adminOnly, ordersController.getOrderById);
 router.put('/:id/status', authMiddleware, adminOnly, ordersController.updateOrderStatus);
 router.delete('/:id', authMiddleware, adminOnly, ordersController.deleteOrder);
+
+// CLIENT ROUTE: Get my orders
+router.get('/my-orders', authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id;
+    // 1. Get user's phone number from DB
+    const [users] = await db.promise().query('SELECT phone FROM users WHERE id = ?', [userId]);
+    
+    if (users.length === 0) return res.status(404).json({ message: 'User not found' });
+    const userPhone = users[0].phone;
+
+    // 2. Find orders matching that phone number
+    const [orders] = await db.promise().query('SELECT * FROM orders WHERE phone = ? ORDER BY created_at DESC', [userPhone]);
+    res.json(orders);
+  } catch (err) {
+    console.error("MY ORDERS ERROR:", err);
+    res.status(500).json({ message: "Failed to load orders" });
+  }
+});
+
 router.get("/", authMiddleware, adminOnly, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;

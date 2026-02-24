@@ -300,26 +300,29 @@ if (categoryFilter && searchInput) {
   searchInput.addEventListener('keyup', filterProducts);
 }
 
-const toggle = document.getElementById("themeToggle");
-const body = document.body;
+// ================== THEME TOGGLE ==================
+document.addEventListener("DOMContentLoaded", () => {
+  const toggle = document.getElementById("themeToggle");
+  const body = document.body;
 
-// Load saved mode
-if (localStorage.getItem("theme") === "dark") {
-  body.classList.add("dark-mode");
-}
+  // Load saved mode
+  if (localStorage.getItem("theme") === "dark" && body) {
+    body.classList.add("dark-mode");
+  }
 
-if (toggle) {
-  toggle.addEventListener("click", () => {
-    body.classList.toggle("dark-mode");
+  if (toggle && body) {
+    toggle.addEventListener("click", () => {
+      body.classList.toggle("dark-mode");
 
-    // Save user preference
-    if (body.classList.contains("dark-mode")) {
-      localStorage.setItem("theme", "dark");
-    } else {
-      localStorage.setItem("theme", "light");
-    }
-  });
-}
+      // Save user preference
+      if (body.classList.contains("dark-mode")) {
+        localStorage.setItem("theme", "dark");
+      } else {
+        localStorage.setItem("theme", "light");
+      }
+    });
+  }
+});
 
 // If on cart page, display cart items
 if (document.getElementById('cartBody')) {
@@ -390,3 +393,54 @@ if (document.getElementById('cartBody')) {
       cartBody.innerHTML = '<tr><td colspan="5" style="color:crimson">Unable to load cart. Check console for details.</td></tr>';
     }
   }
+
+// ================== USER AUTH DISPLAY ==================
+document.addEventListener('DOMContentLoaded', () => {
+  const userStr = localStorage.getItem('user');
+  console.log("Checking user auth...", userStr); // Debug log
+  
+  // Find the login link (robust selector)
+  const loginLink = document.querySelector('a[href*="login.html"]') || 
+                    document.querySelector('.btn-login');
+
+  if (!loginLink) console.log("Login link not found in navbar"); // Debug log
+
+  if (userStr && loginLink) {
+    try {
+      const user = JSON.parse(userStr);
+      
+      // 1. Replace "Login" text with Username
+      loginLink.innerHTML = `👤 ${user.username}`;
+      loginLink.href = "profile.html"; 
+      loginLink.style.cursor = "pointer";
+      console.log("User logged in, updating nav"); // Debug log
+      
+      // 2. Create Logout Link
+      const logoutLink = document.createElement('a');
+      logoutLink.textContent = "Logout";
+      logoutLink.href = "#";
+      logoutLink.style.marginLeft = "15px";
+      logoutLink.style.color = "#ff4d4f";
+      logoutLink.style.fontWeight = "bold";
+
+      logoutLink.addEventListener('click', (e) => {
+        e.preventDefault();
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+      });
+
+      // 3. Insert Logout link after the username
+       // Find the nav element to append the logout link
+      const nav = document.querySelector('nav');
+
+      if (nav) {
+        nav.appendChild(logoutLink);
+      }
+
+    } catch (e) {
+      console.error("Error parsing user data", e);
+      localStorage.removeItem('user');
+    }
+  }
+});

@@ -33,10 +33,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       // 3️⃣ Save user info in localStorage (optional)
+      localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
 
       alert(data.message);
-      window.location.href = '/index.html'; // redirect to dashboard
+      window.location.href = 'index.html'; // redirect to dashboard
 
     } catch (err) {
       console.error('LOGIN FETCH ERROR:', err);

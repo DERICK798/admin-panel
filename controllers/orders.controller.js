@@ -43,7 +43,8 @@ exports.createOrder = async (req, res) => {
 
     res.status(201).json({
       message: "Order placed successfully",
-      orderId
+      orderId,
+      total
     });
   } catch (err) {
     console.error('CREATE ORDER ERROR:', err);

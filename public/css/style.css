@@ -1,4 +1,5 @@
 input, select, textarea {
+  align-content: center;
   width: 100%;
   padding: 0.7rem 0.9rem;
   border-radius: 8px;
@@ -9,12 +10,13 @@ input, select, textarea {
 input:focus, textarea:focus {
   outline: none;
   border-color: var(--primary);
+  align-items: center;
 }
 
 :root {
-  --bg: #f4e6e6;
+  --bg: #c2b6b6;
   --text: #c21731;
-  --card: #17a165;
+  --card: white;
   --header-bg: #1a4d2e;
 }
 
@@ -25,7 +27,7 @@ input:focus, textarea:focus {
 }
 
 .dark-mode {
-  --bg: #232121;
+  --bg: #efefef;
   --text: #0ffa3a;
   --card: #1c4d2c;
   --header-bg: #a3191b;
@@ -268,7 +270,7 @@ nav .active {
   text-align: center;
   padding: 50px;
   background: url('images/Products.jpeg') no-repeat center/cover;
-  color: rgb(45, 231, 147);
+  color: rgb(255, 255, 255);
 }
 
 .product-hero h1 {
@@ -384,10 +386,10 @@ section:nth-of-type(3) { animation-delay: .6s; }
   gap: 8px;
   justify-content: center;
   align-items: center;
-  margin-top: 10px;
+  margin-top: 20px;
   padding: 8px;
   background: rgba(0, 0, 0, 0.45);
-  border-radius: 8px;
+  border-radius: 10px;
   opacity: 0;
   max-height: 0;
   overflow: hidden;
@@ -1021,47 +1023,39 @@ ul{
 
 /* LOGIN PAGE STYLES */
 .login-container {
-  background-color: rgb(235, 14, 102);
-  padding: 40px;
-  margin-top: 100px;
-  border-radius: 1px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  width: 50%;
+  background-color: #fff;
+  padding: 2.5rem;
+  margin: 80px auto 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 90%;
   max-width: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
 }
-
-.form{
-  align-items: center;
-  display: flex;
-}
-
 
 .dark-mode .login-container {
-  background-color: #242424;
+  background-color: var(--card);
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
 }
 
 .login-container h2 {
   margin-bottom: 20px;
   text-align: center;
-  color: var(--text);
+  color: #333;
 }
 
 .login-container label {
   display: block;
   margin-bottom: 5px;
-  color: var(--text);
+  color: #333;
   font-weight: bold;
 
 }
 
 .login-container input {
   width: 100%;
-  display:flex;
   padding: 10px;
   margin-bottom: 15px;
   border: 1px solid #ccc;
@@ -1071,8 +1065,14 @@ ul{
   color: #000;
 }
 
+.dark-mode .login-container h2,
+.dark-mode .login-container label,
+.dark-mode .login-footer label {
+  color: #eee;
+}
+
 .dark-mode .login-container input {
-  background-image: url(https://tse4.mm.bing.net/th/id/OIP.-LxLfbpz-U0VHYGez0OrDwHaDt?rs=1&pid=ImgDetMain&o=7&rm=3);
+  background-color: #333;
   color: #fff;
   border-color: #555;
 }
@@ -1093,6 +1093,27 @@ ul{
 .login-container button:hover {
   background-color: #0d2818;
 }
+
+.login-footer {
+  margin-top: 1.5rem;
+  text-align: center;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+.login-footer label {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  color: #555;
+  font-weight: normal;
+}
+
+.login-footer a {
+  display: block;
+}
+
 .justify-content-center {
   justify-content: center;
 }

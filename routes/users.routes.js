@@ -2,6 +2,7 @@ const db = require('../config/db');
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 /* ================= REGISTER ================= */
 router.post('/register', async (req, res) => {
@@ -60,7 +61,17 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    res.json({ message: 'Login successful' });
+    const token = jwt.sign(
+      { id: user.id, role: 'client' },
+      '28805', // Secret key (same as admin for consistency)
+      { expiresIn: '1d' }
+    );
+
+    res.json({
+      message: 'Login successful',
+      token,
+      user: { id: user.id, username: user.username, email: user.email, phone: user.phone }
+    });
 
   } catch (err) {
     console.error('LOGIN ERROR:', err);

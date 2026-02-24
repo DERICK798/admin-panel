@@ -48,6 +48,8 @@ const clientRoutes = require('./routes/client.routes');
 const userRoutes = require('./routes/users.routes');
 const productRoutes = require('./routes/products.routes');
 
+app.use('/api/mpesa', require('./routes/mpesa.routes'));
+
 app.use('/api/admin', adminRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/client', clientRoutes);
