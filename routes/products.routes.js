@@ -8,6 +8,29 @@ const adminOnly = require('../middleware/admin.middleware');
 router.post('/', authMiddleware, adminOnly, async (req, res) => {
   try {
     const { name, category, price, description, image, image2, quantity } = req.body;
+
+    // Check if product already exists
+    const [existing] = await db.promise().query("SELECT id, price FROM product WHERE name = ?", [name]);
+
+    if (existing.length > 0) {
+      const product = existing[0];
+      const qtyToAdd = parseInt(quantity) || 0;
+
+      let updateQuery = "UPDATE product SET quantity = quantity + ?";
+      const updateParams = [qtyToAdd];
+
+      if (price) {
+        updateQuery += ", price = ?";
+        updateParams.push(price);
+      }
+
+      updateQuery += " WHERE id = ?";
+      updateParams.push(product.id);
+
+      await db.promise().query(updateQuery, updateParams);
+      return res.status(200).json({ message: "Product already exists. Stock and price updated successfully." });
+    }
+
     await db.promise().query(
       "INSERT INTO product (name, category, price, description, image, image2, quantity) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [name, category, price, description, image, image2, quantity]
@@ -58,7 +81,8 @@ router.get('/', async (req, res) => {
       const totalPages = Math.ceil(total / limit);
 
       const [products] = await db.promise().query(
-        `SELECT * FROM product ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
+        'SELECT * FROM product ORDER BY id DESC LIMIT ? OFFSET ?',
+        [limit, offset]
       );
 
       return res.json({

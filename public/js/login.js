@@ -1,42 +1,36 @@
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('login-form');
+    const errorMessage = document.getElementById('error-message');
 
-document.addEventListener('DOMContentLoaded', function () {
-  const form = document.getElementById('login-form');
-  const showPassword = document.getElementById('show-password');
-  const passwordEl = document.getElementById('password');
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (errorMessage) errorMessage.textContent = '';
 
-  showPassword.addEventListener('change', () => {
-    passwordEl.type = showPassword.checked ? 'text' : 'password';
-  });
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+            try {
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, password }),
+                });
 
-    const email = document.getElementById('email').value.trim();
-    const password = document.getElementById('password').value;
+                const data = await response.json();
 
-    if (!email || !password) {
-      alert('Please enter email and password');
-      return;
+                if (response.ok) {
+                    localStorage.setItem('token', data.token); // ✅ Save token for orders.js
+                    window.location.href = '/dashboard';
+                } else {
+                    if (errorMessage) errorMessage.textContent = data.message || 'Invalid email or password';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                if (errorMessage) errorMessage.textContent = 'An error occurred. Please try again.';
+            }
+        });
     }
-
-    try {
-      const res = await fetch('http://localhost:3000/api/admin/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-
-      const data = await res.json();
-
-      if (res.ok) {
-        localStorage.setItem('token', data.token);
-        window.location.href = 'http://localhost:3000/dashboard.html';
-      } else {
-        alert(data.message || 'Login failed');
-      }
-    } catch (err) {
-      console.error(err);
-      alert('Server error');
-    }
-  });
 });

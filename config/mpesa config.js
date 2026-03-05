@@ -1,0 +1,5 @@
+Module.exports = {
+ConsumerKey:hsGdYvZXdXF8RpEMrW8fh2VoJ0eccXzX5PdyQ85x5ATUed38,
+ConsumerSecret:jBniKuv7A7jKGzs9qp89GoO2FvRYLGIETDxS31H64m51CXKjJ626x8zION6bnm87,
+Shortcode:174379,
+}

@@ -3,6 +3,21 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
+const authMiddleware = require('../middleware/auth.middleware');
+
+// Configure Multer for image upload
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Ensure 'uploads' folder exists in your project root
+  },
+  filename: (req, file, cb) => {
+    cb(null, 'avatar-' + Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage });
 
 /* ================= REGISTER ================= */
 router.post('/register', async (req, res) => {
@@ -63,7 +78,7 @@ router.post('/login', async (req, res) => {
 
     const token = jwt.sign(
       { id: user.id, role: 'client' },
-      '28805', // Secret key (same as admin for consistency)
+      process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );
 
@@ -75,6 +90,26 @@ router.post('/login', async (req, res) => {
 
   } catch (err) {
     console.error('LOGIN ERROR:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// UPLOAD AVATAR
+router.post('/upload-avatar', authMiddleware, upload.single('avatar'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
+
+    const userId = req.user.id;
+    const imageUrl = `/uploads/${req.file.filename}`;
+
+    // Update user record in DB
+    await db.promise().query('UPDATE users SET profile_picture = ? WHERE id = ?', [imageUrl, userId]);
+
+    res.json({ message: 'Avatar updated', imageUrl });
+  } catch (err) {
+    console.error("UPLOAD ERROR:", err);
     res.status(500).json({ message: 'Server error' });
   }
 });
@@ -93,7 +128,8 @@ router.get('/', async (req, res) => {
     const totalPages = Math.ceil(total / limit);
 
     const [users] = await db.promise().query(
-      `SELECT id, username as name, email, created_at FROM users ORDER BY id DESC LIMIT ${limit} OFFSET ${offset}`
+      'SELECT id, username as name, email, created_at, profile_picture FROM users ORDER BY id DESC LIMIT ? OFFSET ?',
+      [limit, offset]
     );
 
     res.json({

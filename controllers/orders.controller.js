@@ -5,13 +5,39 @@ exports.createOrder = async (req, res) => {
 
   const { phone, location, payment_method, products } = req.body;
 
-  // validate
-  if (!phone || !location || !payment_method || !products || products.length === 0) {
+  if (!phone || !location || !payment_method || !products || !Array.isArray(products) || products.length === 0) {
     return res.status(400).json({ message: 'Invalid order data' });
   }
 
+  let connection;
+
   try {
-    // calculate total correctly
+    connection = await db.promise().getConnection();
+    await connection.beginTransaction();
+
+    // 1. Check stock for all products and lock rows for update to prevent race conditions
+    for (const product of products) {
+      if (!product.id || !product.quantity || product.quantity <= 0) {
+        throw new Error('Invalid product data in order. Each product must have an id and quantity.');
+      }
+
+      // This is where your requested logic goes, with added safety checks
+      const [rows] = await connection.query(
+        "SELECT quantity FROM product WHERE id = ? FOR UPDATE",
+        [product.id]
+      );
+
+      if (rows.length === 0) {
+        throw new Error(`Product with ID ${product.id} not found.`);
+      }
+
+      const availableStock = rows[0].quantity;
+      if (availableStock < product.quantity) {
+        throw new Error(`Not enough stock for product ${product.name || product.id}. Available: ${availableStock}, Requested: ${product.quantity}`);
+      }
+    }
+
+    // 2. Calculate total correctly
     const total = products.reduce((sum, p) => sum + Number(p.price) * Number(p.quantity), 0);
 
     const orderQuery = `
@@ -19,27 +45,32 @@ exports.createOrder = async (req, res) => {
       VALUES (?, ?, ?, ?, ?)
     `;
 
-    // 1. Save Order
-    const [result] = await db.promise().query(orderQuery, [phone, location, payment_method, total, 'Pending']);
+    // 3. Save Order
+    const [result] = await connection.query(orderQuery, [phone, location, payment_method, total, 'Pending']);
     const orderId = result.insertId;
 
-    // 2. Prepare Items
+    // 4. Prepare and save order items
     const items = products.map(p => [
       orderId,
-      p.name || 'Unknown Product', // Safety check
+      p.name || 'Unknown Product',
       Number(p.price),
       Number(p.quantity)
     ]);
-
     const itemQuery = `
       INSERT INTO order_items (order_id, product_name, price, quantity)
       VALUES ?
     `;
-
-    // 3. Save Items (Bulk Insert)
     if (items.length > 0) {
-      await db.promise().query(itemQuery, [items]);
+      await connection.query(itemQuery, [items]);
     }
+
+    // 5. Update stock for all products
+    for (const product of products) {
+      await connection.query("UPDATE product SET quantity = quantity - ? WHERE id = ?", [product.quantity, product.id]);
+    }
+
+    // 6. If all is well, commit the transaction
+    await connection.commit();
 
     res.status(201).json({
       message: "Order placed successfully",
@@ -47,8 +78,11 @@ exports.createOrder = async (req, res) => {
       total
     });
   } catch (err) {
+    if (connection) await connection.rollback(); // Rollback on any error
     console.error('CREATE ORDER ERROR:', err);
-    res.status(500).json({ message: 'Failed to create order', error: err.message });
+    res.status(err.message.includes('Not enough stock') || err.message.includes('not found') ? 400 : 500).json({ message: err.message || 'Failed to create order' });
+  } finally {
+    if (connection) connection.release(); // Release connection back to the pool
   }
 };
 

@@ -3,16 +3,18 @@ const router = express.Router();
 const db = require('../config/db');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const authMiddleware = require('../middleware/auth.middleware');
+const adminOnly = require('../middleware/admin.middleware');
 
 // Register new admin (Use this to create your first admin)
 router.post('/register', async (req, res) => {
-  console.log("👉 Register Request:", req.body);
+  console.log(" Register Request:", req.body);
   try {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log("💾 Saving to DB...");
+    console.log("Saving to DB...");
     await db.promise().query('INSERT INTO admins (email, password) VALUES (?, ?)', [email, hashedPassword]);
     console.log("✅ Saved!");
 
@@ -50,10 +52,13 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Invalid password' });
     }
 
+    // ✅ Set session for server-side authentication check
+    req.session.admin = rows[0];
+
     console.log('STEP 6: GENERATE TOKEN');
     const token = jwt.sign(
       { id: rows[0].id, role: 'admin' },
-      '28805',
+      process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );
 
@@ -66,5 +71,21 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// Get Dashboard Stats
+router.get('/stats', authMiddleware, adminOnly, async (req, res) => {
+  try {
+    const [userRows] = await db.promise().query('SELECT COUNT(*) as total FROM users');
+    const [orderRows] = await db.promise().query('SELECT COUNT(*) as total, SUM(total) as revenue FROM orders');
+
+    res.json({
+      users: userRows[0].total,
+      orders: orderRows[0].total,
+      revenue: orderRows[0].revenue || 0
+    });
+  } catch (err) {
+    console.error('STATS ERROR:', err);
+    res.status(500).json({ message: 'Failed to fetch stats' });
+  }
+});
 
 module.exports = router;

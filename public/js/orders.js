@@ -3,7 +3,7 @@ const orderToken = localStorage.getItem('token');
 
 if (!orderToken || orderToken === 'undefined') {
   alert('Please login as admin');
-  window.location.href = '/admin-login.html';
+  window.location.href = '/admin-login';
 }
 // ================== PAGINATION RENDER ==================
 function renderPagination(page, totalPages) {
@@ -38,6 +38,15 @@ function renderPagination(page, totalPages) {
   pagination.appendChild(nextBtn);
 }
 
+// Helper function to escape HTML and prevent XSS
+function escapeHTML(str) {
+  if (str === null || str === undefined) return '';
+  const p = document.createElement("p");
+  p.textContent = str;
+  return p.innerHTML;
+}
+
+
 // ================== LOAD ORDERS ==================
 let currentOrderPage = 1;
 let currentSearchQuery = "";
@@ -52,16 +61,17 @@ async function loadOrders(page = 1, searchQuery = null) {
 console.log("ORDER TOKEN:", orderToken);
 
   try {
-    const res = await fetch(`http://localhost:3000/api/orders?page=${page}&limit=${limit}&search=${encodeURIComponent(currentSearchQuery)}`, {
+    const res = await fetch(`/api/orders?page=${page}&limit=${limit}&search=${encodeURIComponent(currentSearchQuery)}`, {
       headers: {
         Authorization: `Bearer ${orderToken}`,
       },
     });
 
     if (!res.ok) {
-      if (res.status === 401) {
-        alert('Session expired. Please login again.');
-        window.location.href = '/admin-login.html';
+      if (res.status === 401 || res.status === 403) {
+        alert('Session expired or unauthorized. Please login again.');
+        localStorage.removeItem('token');
+        window.location.href = '/admin-login';
         return;
       }
       const errText = await res.text();
@@ -100,11 +110,11 @@ console.log("ORDER TOKEN:", orderToken);
       }
 
       row.innerHTML = `
-        <td>${o.id}</td>
-        <td>${o.phone}</td>
-        <td>${o.location || "-"}</td>
-        <td>${o.payment_method}</td>
-        <td style="font-weight:bold; color:${o.status === 'Pending' ? 'orange' : (o.status === 'Delivered' ? 'green' : 'red')}">${o.status}</td>
+        <td>${escapeHTML(o.id)}</td>
+        <td>${escapeHTML(o.phone)}</td>
+        <td>${escapeHTML(o.location || "-")}</td>
+        <td>${escapeHTML(o.payment_method)}</td>
+        <td style="font-weight:bold; color:${o.status === 'Pending' ? 'orange' : (o.status === 'Delivered' ? 'green' : 'red')}">${escapeHTML(o.status)}</td>
         <td>${o.total}</td>
         <td>${o.created_at ? new Date(o.created_at).toLocaleString() : 'N/A'}</td>
         <td>

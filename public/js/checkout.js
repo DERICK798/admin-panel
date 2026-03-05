@@ -55,8 +55,8 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       // Step 1: Create the order to get an orderId and final total
       const orderProducts = cart.map(item => ({
-        product_id: item.id, // IMPORTANT: Ensure your cart items have an 'id'
-        quantity: item.qty,
+        id: item.id, // Use 'id' to match the backend controller's expectation
+        quantity: item.qty || 1, // Ensure quantity is valid, defaulting to 1
         price: item.price,
         name: item.name
       }));
