@@ -1,68 +1,55 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('../middleware/auth.middleware');
 const adminOnly = require('../middleware/admin.middleware');
 
 // Register new admin (Use this to create your first admin)
-router.post('/register', async (req, res) => {
-  console.log(" Register Request:", req.body);
+router.post('/register', authMiddleware, adminOnly, async (req, res) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) return res.status(400).json({ message: 'Email and password required' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    console.log("Saving to DB...");
     await db.promise().query('INSERT INTO admins (email, password) VALUES (?, ?)', [email, hashedPassword]);
-    console.log("✅ Saved!");
 
     res.status(201).json({ message: 'Admin registered successfully' });
   } catch (err) {
     console.error('ADMIN REGISTER ERROR:', err);
-    res.status(500).json({ message: 'Server error during registration', error: err.message });
+    res.status(500).json({ message: 'Server error during registration' });
   }
 });
 
 router.post('/login', async (req, res) => {
   try {
-    console.log('STEP 1: BODY', req.body);
-
     const { email, password } = req.body;
 
-    console.log('STEP 2: QUERY DB');
-  const [rows] = await db.promise().query(
-  'SELECT * FROM admins WHERE email = ?',
-  [email]
-);
+    const [rows] = await db.promise().query(
+      'SELECT * FROM admins WHERE email = ?',
+      [email]
+    );
 
-    console.log('STEP 3: ROWS', rows);
-
+    // Use a generic error message to prevent user enumeration
     if (!rows.length) {
-      return res.status(401).json({ message: 'Admin not found' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    console.log('STEP 4: COMPARE PASSWORD');
     const isMatch = await bcrypt.compare(password, rows[0].password);
-
-    console.log('STEP 5: PASSWORD MATCH?', isMatch);
-
     if (!isMatch) {
-      return res.status(401).json({ message: 'Invalid password' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // ✅ Set session for server-side authentication check
-    req.session.admin = rows[0];
+    // Restore session for server-side page protection in server.js
+    req.session.admin = { id: rows[0].id, email: rows[0].email };
 
-    console.log('STEP 6: GENERATE TOKEN');
     const token = jwt.sign(
       { id: rows[0].id, role: 'admin' },
       process.env.JWT_SECRET,
       { expiresIn: '1d' }
     );
 
-    console.log('STEP 7: SEND RESPONSE');
     return res.json({ token });
 
   } catch (err) {
@@ -75,7 +62,14 @@ router.post('/login', async (req, res) => {
 router.get('/stats', authMiddleware, adminOnly, async (req, res) => {
   try {
     const [userRows] = await db.promise().query('SELECT COUNT(*) as total FROM users');
-    const [orderRows] = await db.promise().query('SELECT COUNT(*) as total, SUM(total) as revenue FROM orders');
+    
+    // Calculate stats while excluding cancelled orders from both the count and the revenue sum
+    const statsQuery = `
+      SELECT 
+        COUNT(IF(LOWER(status) != 'cancelled', 1, NULL)) as total, 
+        SUM(IF(LOWER(status) != 'cancelled', total, 0)) as revenue 
+      FROM orders`;
+    const [orderRows] = await db.promise().query(statsQuery);
 
     res.json({
       users: userRows[0].total,

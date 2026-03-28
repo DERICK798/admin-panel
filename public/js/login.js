@@ -1,36 +1,34 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.getElementById('login-form');
-    const errorMessage = document.getElementById('error-message');
+  const form = document.getElementById('login-form');
+  const errorMessage = document.getElementById('error-message');
 
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (errorMessage) errorMessage.textContent = '';
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
 
-            try {
-                const response = await fetch('/api/admin/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ email, password }),
-                });
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
 
-                const data = await response.json();
+      const data = await res.json();
 
-                if (response.ok) {
-                    localStorage.setItem('token', data.token); // ✅ Save token for orders.js
-                    window.location.href = '/dashboard';
-                } else {
-                    if (errorMessage) errorMessage.textContent = data.message || 'Invalid email or password';
-                }
-            } catch (error) {
-                console.error('Login error:', error);
-                if (errorMessage) errorMessage.textContent = 'An error occurred. Please try again.';
-            }
-        });
+      if (res.ok) {
+        // Store token for subsequent API calls in dashboard.html
+        localStorage.setItem('token', data.token);
+        // Redirect to dashboard
+        window.location.href = '/dashboard';
+      } else {
+        errorMessage.textContent = data.message || 'Invalid admin credentials';
+      }
+    } catch (err) {
+      errorMessage.textContent = 'Server error. Please try again later.';
     }
+  });
 });

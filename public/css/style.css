@@ -16,8 +16,9 @@ input:focus, textarea:focus {
 :root {
   --bg: #c2b6b6;
   --text: #c21731;
-  --card: rgb(14, 176, 209);
+  --card: rgba(234, 224, 224, 0.937);
   --header-bg: #1a4d2e;
+  --primary: #1a4d2e;
 }
 
 @media (max-width: 768px) {

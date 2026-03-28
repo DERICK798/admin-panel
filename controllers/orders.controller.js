@@ -88,16 +88,44 @@ exports.createOrder = async (req, res) => {
 
 exports.updateOrderStatus = async (req, res) => {
   const { id } = req.params;
-  const { status } = req.body; // Expecting 'Pending' or 'Delivered'
+  const { status } = req.body; 
 
-  const sql = 'UPDATE orders SET status = ? WHERE id = ?';
-
+  let connection;
   try {
-    await db.promise().query(sql, [status, id]);
-    res.json({ message: 'Order status updated successfully' });
+    connection = await db.promise().getConnection();
+    await connection.beginTransaction();
+
+    // 1. Get current status to avoid double-restocking
+    const [orders] = await connection.query('SELECT status FROM orders WHERE id = ?', [id]);
+    if (orders.length === 0) throw new Error('Order not found');
+
+    const currentStatus = orders[0].status;
+
+    // 2. Logic: If changing to 'cancelled' from something else, return stock
+    if (status.toLowerCase() === 'cancelled' && currentStatus.toLowerCase() !== 'cancelled') {
+      const [items] = await connection.query(
+        'SELECT product_name, quantity FROM order_items WHERE order_id = ?',
+        [id]
+      );
+
+      for (const item of items) {
+        await connection.query(
+          'UPDATE product SET quantity = quantity + ? WHERE name = ?',
+          [item.quantity, item.product_name]
+        );
+      }
+    }
+
+    await connection.query('UPDATE orders SET status = ? WHERE id = ?', [status, id]);
+    await connection.commit();
+
+    res.json({ message: `Order status updated to ${status}. Stock adjusted if necessary.` });
   } catch (err) {
+    if (connection) await connection.rollback();
     console.error('UPDATE STATUS ERROR:', err);
     res.status(500).json({ message: 'Failed to update status' });
+  } finally {
+    if (connection) connection.release();
   }
 };
 

@@ -3,7 +3,7 @@ const db = require('../config/db');
 /**
  * ADD PRODUCT (ADMIN)
  */
-exports.addProduct = (req, res) => {
+exports.addProduct = async (req, res) => {
   const {
     name,
     category,
@@ -82,7 +82,7 @@ exports.getAnimalFeed = (req, res) => {
 };
 
 /**
- * GET ONE PRODUCT BY ID ✅
+ * GET ONE PRODUCT BY ID 
  */
 
 /**
@@ -201,4 +201,3 @@ exports.create = (req, res) => {
     res.json({ message: "Product added", id: result.insertId });
   });
 };
-

@@ -40,7 +40,7 @@ width:100%;
 .sidebar {
     width:220px;
     background-color:rgb(14, 219, 100);
-    color:blueSky;;
+    color:skyblue;
     height: 300px;
     box-shadow:2px 0 5px rgba(0,0,0,0.1);
 }
@@ -115,7 +115,7 @@ th {
 }
 
 .sidebar nav ul {
-  list-style: flex;
+  list-style: none;
 }
 
 .sidebar nav ul li {

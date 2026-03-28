@@ -213,7 +213,8 @@
       if (res.ok) {
         document.getElementById('total-users').textContent = data.users;
         document.getElementById('total-orders').textContent = data.orders;
-        document.getElementById('total-revenue').textContent = 'KES ' + Number(data.revenue).toLocaleString();
+        const revenue = data.revenue || 0;
+        document.getElementById('total-revenue').textContent = 'KES ' + Number(revenue).toLocaleString();
       }
     } catch (err) {
       console.error('Error loading stats:', err);

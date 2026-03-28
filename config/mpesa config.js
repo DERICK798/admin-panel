@@ -1,5 +1,6 @@
-Module.exports = {
-ConsumerKey:hsGdYvZXdXF8RpEMrW8fh2VoJ0eccXzX5PdyQ85x5ATUed38,
-ConsumerSecret:jBniKuv7A7jKGzs9qp89GoO2FvRYLGIETDxS31H64m51CXKjJ626x8zION6bnm87,
-Shortcode:174379,
-}
+module.exports = {
+  ConsumerKey: "bryiX5dve7408F9HvpHYVdx86mkHehJfO3kHgmR0doTObpwz",
+  ConsumerSecret: "IV5TVv5X7BbGQ7YDTCoGGdxGNKNtsCF7V2NkqxefQ4IPcYRAofwy9g5wR971VRyH",
+  Shortcode: "174379",
+  passkey: "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919",
+};

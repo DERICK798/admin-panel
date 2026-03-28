@@ -1,11 +1,12 @@
 const db = require('../config/db');
 const express = require('express');
 const router = express.Router();
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const path = require('path');
 const authMiddleware = require('../middleware/auth.middleware');
+const adminOnly = require('../middleware/admin.middleware');
 
 // Configure Multer for image upload
 const storage = multer.diskStorage({
@@ -17,7 +18,18 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage });
+const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    const filetypes = /jpeg|jpg|png|gif|webp/;
+    const mimetype = filetypes.test(file.mimetype);
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    if (mimetype && extname) {
+      return cb(null, true);
+    }
+    cb(new Error('Error: Only images (jpeg, jpg, png, gif, webp) are allowed!'));
+  }
+});
 
 /* ================= REGISTER ================= */
 router.post('/register', async (req, res) => {
@@ -114,7 +126,7 @@ router.post('/upload-avatar', authMiddleware, upload.single('avatar'), async (re
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/', authMiddleware, adminOnly, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;

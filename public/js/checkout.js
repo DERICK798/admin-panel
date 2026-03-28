@@ -102,7 +102,7 @@ document.addEventListener("DOMContentLoaded", () => {
       localStorage.removeItem("cart"); // Clear cart after successful initiation
       setTimeout(() => {
         // Redirect to a "my orders" page or a success page
-        window.location.href = '/my-orders.html'; 
+        window.location.href = '/profile.html'; 
       }, 5000);
 
     } catch (err) {

@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    // 1️⃣ Get form values
+    // 1️ Get form values
     const emailOrPhone = document.getElementById('emailOrPhone').value.trim();
     const password = document.getElementById('password').value;
 
