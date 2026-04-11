@@ -68,8 +68,7 @@ exports.createOrder = async (req, res) => {
     for (const product of products) {
       await connection.query("UPDATE product SET quantity = quantity - ? WHERE id = ?", [product.quantity, product.id]);
     }
-
-    // 6. If all is well, commit the transaction
+    
     await connection.commit();
 
     res.status(201).json({

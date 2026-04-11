@@ -42,6 +42,10 @@
       <!-- Overview Section -->
       <section id="overview">
         <h1>Dashboard Overview</h1>
+        
+        <!-- Container where New User/Order Alerts will appear -->
+        <div id="dashboard-alerts"></div>
+
         <div class="stats-cards">
           <div class="card">
             <h3>Total Users</h3>
@@ -97,7 +101,9 @@
       <th>Total</th>
       <th>Date</th>
       <th>Actions</th>
-    </tr>
+      <th> checkoutRequestID</th>
+      <th>mpesaReceipt</th>
+      <th> resultDesc</th>
   </thead>
   <tbody>
     <!-- Dynamic rows -->
@@ -155,6 +161,7 @@
   <script src="/js/add-product.js"></script> <!-- logic for add/edit/delete -->
 <script src="/js/orders.js"></script>
 <script src="/js/users.js"></script>
+<script src="/js/dashboard.js"></script>
 
 <script>
   // ✅ Fix broken images (handles 404s and malformed URLs)
@@ -176,19 +183,24 @@
       // Show target section
       const target = document.querySelector(id);
       if (target) target.style.display = "block";
+
+      // Update active state in sidebar
+      links.forEach(l => {
+        l.classList.toggle("active", l.getAttribute("href") === id);
+      });
     }
 
-    links.forEach(link => {
-      link.addEventListener("click", (e) => {
-        const href = link.getAttribute("href");
-        if (href.startsWith("#")) {
-          e.preventDefault();
-          // Update active class
-          links.forEach(l => l.classList.remove("active"));
-          link.classList.add("active");
-          showSection(href);
-        }
-      });
+    // Handle clicks on any link starting with # (Sidebar or Dashboard Alerts)
+    document.addEventListener("click", (e) => {
+      const link = e.target.closest("a");
+      if (!link) return;
+      
+      const href = link.getAttribute("href");
+      if (href && href.startsWith("#")) {
+        e.preventDefault();
+        showSection(href);
+        window.location.hash = href;
+      }
     });
 
     // Show default section (Overview) or based on hash
@@ -198,27 +210,6 @@
     // Set active link based on hash
     const activeLink = document.querySelector(`.sidebar nav ul li a[href="${hash}"]`);
     if (activeLink) activeLink.classList.add("active");
-  });
-
-  // Load Dashboard Stats
-  document.addEventListener("DOMContentLoaded", async () => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-
-    try {
-      const res = await fetch('/api/admin/stats', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      const data = await res.json();
-      if (res.ok) {
-        document.getElementById('total-users').textContent = data.users;
-        document.getElementById('total-orders').textContent = data.orders;
-        const revenue = data.revenue || 0;
-        document.getElementById('total-revenue').textContent = 'KES ' + Number(revenue).toLocaleString();
-      }
-    } catch (err) {
-      console.error('Error loading stats:', err);
-    }
   });
 </script>
 </body>

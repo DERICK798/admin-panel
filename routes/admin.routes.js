@@ -61,20 +61,28 @@ router.post('/login', async (req, res) => {
 // Get Dashboard Stats
 router.get('/stats', authMiddleware, adminOnly, async (req, res) => {
   try {
-    const [userRows] = await db.promise().query('SELECT COUNT(*) as total FROM users');
+    // Get total users and count of users joined in the last 24 hours
+    const [userStats] = await db.promise().query(`
+      SELECT 
+        COUNT(*) as total, 
+        IFNULL(SUM(CASE WHEN created_at >= NOW() - INTERVAL 1 DAY THEN 1 ELSE 0 END), 0) as newToday 
+      FROM users`);
     
     // Calculate stats while excluding cancelled orders from both the count and the revenue sum
     const statsQuery = `
       SELECT 
         COUNT(IF(LOWER(status) != 'cancelled', 1, NULL)) as total, 
-        SUM(IF(LOWER(status) != 'cancelled', total, 0)) as revenue 
+        IFNULL(SUM(IF(LOWER(status) != 'cancelled', total, 0)), 0) as revenue,
+        IFNULL(SUM(CASE WHEN created_at >= NOW() - INTERVAL 1 DAY AND status = 'Pending' THEN 1 ELSE 0 END), 0) as newToday
       FROM orders`;
     const [orderRows] = await db.promise().query(statsQuery);
 
     res.json({
-      users: userRows[0].total,
+      users: userStats[0].total,
+      newUsersToday: userStats[0].newToday,
       orders: orderRows[0].total,
-      revenue: orderRows[0].revenue || 0
+      revenue: orderRows[0].revenue,
+      newOrdersToday: orderRows[0].newToday
     });
   } catch (err) {
     console.error('STATS ERROR:', err);

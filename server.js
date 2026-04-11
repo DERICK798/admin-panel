@@ -5,7 +5,7 @@ const cors = require('cors');
 const path = require('path');
 const fs = require('fs');
 
-const db = require('./config/db'); // ✅ import mysql2 connection
+const db = require('./config/db'); // import mysql2 connection
 
 // ✅ Security Check: Ensure essential environment variables are set
 if (!process.env.SESSION_SECRET || !process.env.JWT_SECRET) {
@@ -49,7 +49,9 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
-    secure: process.env.NODE_ENV === 'production' // Use secure cookies in production
+    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
+    httpOnly: true, // Prevents client-side JS from reading the cookie
+    sameSite: 'lax' // Protects against CSRF
   }
 }));
 

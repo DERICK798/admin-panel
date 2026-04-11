@@ -122,6 +122,9 @@ console.log("ORDER TOKEN:", orderToken);
           ${actionButtons}
           <button onclick="deleteOrder(${o.id})" style="background:red; color:white; cursor:pointer;">Delete</button>
         </td>
+        <td>${escapeHTML(o.checkoutRequestID)}</td>
+         <td>${escapeHTML(o. mpesaReceipt)}</td>
+          <td>${escapeHTML(o. resultDesc)}</td>
       `;
 
       tbody.appendChild(row);

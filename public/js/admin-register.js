@@ -7,7 +7,7 @@ document.getElementById('register-form').addEventListener('submit', async (e) =>
   try {
     // Hapa ndipo tunatumia POST method
     const res = await fetch('/api/admin/register', {
-      method: 'POST', // 👈 Hii ndio siri ya kutuma data
+      method: 'POST', //  Hii ndio siri ya kutuma data
       headers: { 
         'Content-Type': 'application/json' 
       },

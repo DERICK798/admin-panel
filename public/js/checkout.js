@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
     mpesaBtn.disabled = true;
     mpesaBtn.textContent = "Processing...";
     showMessage("Please wait while we create your order...", "info");
-    console.log("🛒 [Checkout] Starting M-Pesa payment flow for:", phone);
+    console.log(" [Checkout] Starting M-Pesa payment flow for:", phone);
 
     try {
       // Step 1: Create the order to get an orderId and final total
